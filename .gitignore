@@ -1,4 +1,6 @@
-dist/main.js*
+dist
 node_modules
-src/*.js*
 test
+src/*.js
+src/*.js.map
+!src/sw.js

@@ -9,7 +9,7 @@
         "strictFunctionTypes": true,
         "sourceMap": true,
         "noImplicitAny": true,
-        "strict": true,
+        "strict": true
     },
     "exclude": [
         "node_modules",

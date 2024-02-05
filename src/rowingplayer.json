@@ -1,0 +1,17 @@
+{
+    "name": "Rowing Player",
+    "short_name": "RP",
+    "description": "Spielt Musik für deine Rowing-Classes und zeigt dabei nützliche Informationen wie Takt, Zeit und beliebige Gedankenstützen an",
+    "start_url": "/",
+    "display": "fullscreen",
+    "orientation": "portrait",
+    "theme_color": "#0c66c7",
+    "background_color": "#2a2c34",
+    "icons" : [
+        {
+            "src": "rowingplayer.svg",
+            "sizes": "any",
+            "purpose": "maskable"
+        }
+    ]
+}

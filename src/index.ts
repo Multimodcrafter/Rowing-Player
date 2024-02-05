@@ -1,5 +1,7 @@
 import * as JSZip from "jszip";
 
+require('./mystyles.scss');
+
 interface Display {
     Text: string,
     Time: number,
