@@ -37,17 +37,38 @@ function isIterable(obj: any): boolean {
 }
 
 function displayIsValid(disp: any): disp is Display {
-    if (typeof disp.Text !== "string") return false;
-    if (typeof disp.Time !== "number") return false;
+    if (typeof disp.Text !== "string") {
+        console.log(disp.Text + " is not string");
+        return false;
+    }
+    if (typeof disp.Time !== "number") {
+        console.log(disp.Time + " is not number");
+        return false;
+    }
     return true;
 }
 
 function songIsValid(song: any): song is Song {
-    if (typeof song.Path !== "string") return false;
-    if (typeof song.Name !== "string") return false;
-    if (typeof song.Tempo !== "number") return false;
-    if (typeof song.Intro !== "number") return false;
-    if (!isIterable(song.Instructions)) return false;
+    if (typeof song.Path !== "string") {
+        console.log(song.Path + " is not string");
+        return false;
+    }
+    if (typeof song.Name !== "string"){
+        console.log(song.Name + " is not string");
+        return false;
+    }
+    if (typeof song.Tempo !== "number") {
+        console.log(song.Tempo + " is not number");
+        return false;
+    }
+    if (typeof song.Intro !== "number") {
+        console.log(song.Intro + " is not number");
+        return false;
+    }
+    if (!isIterable(song.Instructions)) {
+        console.log("instructions not iterable");
+        return false;
+    }
     for (const inst of song.Instructions) {
         if(!displayIsValid(inst)) return false;
     }
@@ -55,8 +76,16 @@ function songIsValid(song: any): song is Song {
 }
 
 function trainingIsValid(obj: any): obj is Training {
-    if (typeof obj.Name !== "string") return false;
-    if (!isIterable(obj.Content)) return false;
+    console.log("Validating the following training object:");
+    console.log(obj);
+    if (typeof obj.Name !== "string") {
+        console.log("Training name not string");
+        return false;
+    }
+    if (!isIterable(obj.Content)) {
+        console.log("Training content not iterable");
+        return false;
+    }
     for (const song of obj.Content) {
         if(!songIsValid(song)) return false;
     }
@@ -135,7 +164,7 @@ class State {
         try {
             this._isBusy = true;
             const zip = new JSZip();
-            console.log("Loading file: " + target.files[0]);
+            console.log("Loading file: " + target.files[0].name);
             this._trainingFile = await zip.loadAsync(target.files[0]);
             console.log("Zip file loaded, loading training.json");
             this._training = await this._loadTrainingFromZip();
