@@ -2,7 +2,7 @@
     "name": "Rowing Player",
     "short_name": "RP",
     "description": "Spielt Musik für deine Rowing-Classes und zeigt dabei nützliche Informationen wie Takt, Zeit und beliebige Gedankenstützen an",
-    "start_url": "/",
+    "start_url": "/~haenniro/",
     "display": "fullscreen",
     "orientation": "portrait",
     "theme_color": "#0c66c7",
