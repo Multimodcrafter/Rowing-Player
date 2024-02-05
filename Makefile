@@ -1,6 +1,5 @@
 .PHONY: all serve test
 all:
-	npx tsc
 	npx webpack
 
 serve:

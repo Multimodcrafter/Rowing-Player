@@ -17,18 +17,25 @@
                     <div class="column is-half">
                         <div class="box">
                             <h1 class="title">Rowing Player</h1>
-                            <div class="file is-danger is-fullwidth">
-                                <label class="file-label is-fullwidth">
-                                <input class="file-input" type="file" id="file-selector" />
-                                <span class="file-cta is-fullwidth">
-                                    <span class="file-icon">
-                                    <i class="fas fa-cloud-upload-alt"></i>
-                                    </span>
-                                    <span class="file-label">
-                                    Training Laden
-                                    </span>
+                            <button class="button is-danger" id="file-selector-button">
+                                <span class="icon">
+                                    <i class="fas fa-folder-open"></i>
                                 </span>
-                                </label>
+                                <span>Training Laden</span>
+                            </button>
+                            <input class="is-hidden" type="file" id="file-selector" />
+                        </div>
+
+                        <div class="box" id="instruction-display">
+                            <p id="instruction-text" class="has-text-weight-bold"></p>
+                        </div>
+                        
+                        <div class="box">
+                            <div class="columns is-centered is-hidden is-mobile" id="intro-display">
+                                <p class="column is-narrow" id="intro-text"></p>
+                            </div>
+                            <div class="columns is-centered is-mobile">
+                                <p class="column is-narrow is-size-1 has-text-weight-bold" id="beat-display"></p>
                             </div>
                         </div>
                         
@@ -38,23 +45,10 @@
                             </p>
                             <progress id="remaining-indicator" value="0" max="100" class="progress is-primary block"></progress>
                         </div>
-                        
-                        <div class="box">
-                            <div class="columns is-centered is-hidden" id="intro-display">
-                                <p class="column is-narrow" id="intro-text"></p>
-                            </div>
-                            <div class="columns is-centered">
-                                <p class="column is-narrow is-size-1 has-text-weight-bold" id="beat-display"></p>
-                            </div>
-                        </div>
-
-                        <div class="box" id="instruction-display">
-                            <p id="instruction-text"></p>
-                        </div>
 
                         <div class="box">
                             <div class="buttons is-centered">
-                                <button class="button is-rounded" id="previous-button">
+                                <button class="button is-light is-rounded" id="previous-button">
                                     <span class="icon">
                                         <i class="fas fa-backward-step fa-lg"></i>
                                     </span>
@@ -64,7 +58,7 @@
                                         <i class="fas fa-play fa-lg"></i>
                                     </span>
                                 </button>
-                                <button class="button is-rounded" id="next-button">
+                                <button class="button is-light is-rounded" id="next-button">
                                     <span class="icon">
                                         <i class="fas fa-forward-step fa-lg"></i>
                                     </span>

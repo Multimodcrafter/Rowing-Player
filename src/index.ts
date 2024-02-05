@@ -309,6 +309,7 @@ class State {
 const state = new State();
 
 const file_selector = document.getElementById("file-selector");
+const file_selectorButton = document.getElementById("file-selector-button");
 
 const remainingDisplay = document.getElementById("remaining-display");
 const introDisplay = document.getElementById("intro-display");
@@ -326,10 +327,10 @@ const previousButton = document.getElementById("previous-button");
 
 function setControlState() {
     if (state.isBusy() || state.isPlaying()) {
-        file_selector?.setAttribute("disabled", "true");
+        file_selectorButton?.setAttribute("disabled", "true");
         resetButton?.setAttribute("disabled", "true");
     } else {
-        file_selector?.removeAttribute("disabled");
+        file_selectorButton?.removeAttribute("disabled");
         resetButton?.removeAttribute("disabled");
     }
 
@@ -367,7 +368,18 @@ async function render() {
         || !nameDisplay
         || !remainingIndicator
         || !introTextElement
-        || !instTextElement) return;
+        || !instTextElement) {
+            console.error("some elements not found");
+            console.log(remainingDisplay);
+            console.log(introDisplay);
+            console.log(instDisplay);
+            console.log(beatDisplay);
+            console.log(nameDisplay);
+            console.log(remainingIndicator);
+            console.log(introTextElement);
+            console.log(instTextElement);
+            return;
+        }
 
     const renderInfo = await state.render();
     let minutes = Math.floor(renderInfo.remaining / 60);
@@ -422,12 +434,18 @@ async function chooseTraining(evt: Event) {
     await state.chooseTraining(evt);
 }
 
+function selectFile() {
+    file_selector?.click();
+}
+
 function initialize() {
+    console.log("Hello from rowing player");
     file_selector?.addEventListener("change", chooseTraining);
     playButton?.addEventListener("click", playPause);
     resetButton?.addEventListener("click", reset);
     nextButton?.addEventListener("click", next);
     previousButton?.addEventListener("click", previous);
+    file_selectorButton?.addEventListener("click", selectFile);
     window.requestAnimationFrame(render);
 }
 
