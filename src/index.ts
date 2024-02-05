@@ -1,4 +1,5 @@
 import * as JSZip from "jszip";
+import {VERSION} from "./sw";
 
 require('./mystyles.scss');
 
@@ -273,7 +274,7 @@ class State {
         if (!this._training) return defaultRenderInfo;
         const song = this._training.Content[this._currentSongIndex];
         const songName = song.Name;
-        const trainingName = `Training '${this._training.Name}' geladen`;
+        const trainingName = this._training.Name;
         const totalBeats = this._songOffset * song.Tempo / 60
         const beat = Math.ceil(totalBeats % 4);
         let intro = 0;
@@ -478,6 +479,8 @@ function selectFile() {
 
 function initialize() {
     console.log("Hello from rowing player");
+    const versionDisplay = document.getElementById("version-display")
+    if(versionDisplay) versionDisplay.innerText = `v${VERSION}`;
     file_selector?.addEventListener("change", chooseTraining);
     playButton?.addEventListener("click", playPause);
     resetButton?.addEventListener("click", reset);

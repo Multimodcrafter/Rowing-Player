@@ -1,5 +1,9 @@
-const VERSION = "0.1.2";
+const VERSION = "0.1.3";
 const CACHE_NAME = `rowing-player-${VERSION}`;
+
+module.exports = {
+    VERSION: VERSION
+};
 
 const APP_STATIC_RESOURCES = [
     "/",
