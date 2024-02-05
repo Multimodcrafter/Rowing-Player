@@ -5,7 +5,11 @@ const APP_STATIC_RESOURCES = [
     "/",
     "/index.html",
     "/css/mystyles.css",
+    "/css/fontawesome.min.css",
+    "/css/solid.min.css",
     "/js/bundle.js",
+    "/webfonts/fa-solid-900.ttf",
+    "/webfonts/fa-solid-900.woff2",
     "/rowingplayer.svg"
 ];
 

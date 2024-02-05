@@ -61,10 +61,10 @@ function trainingIsValid(obj: any): obj is Training {
 }
 
 const defaultRenderInfo: RenderInfo = {
-    SongName: "",
+    SongName: "Kein Song geladen",
     remaining: 0,
     completion: 0,
-    beat: 0,
+    beat: 1,
     displaytext: "",
     displaycountdown: 0,
     introcountdown: 0
@@ -233,11 +233,8 @@ class State {
         this._isBusy = false;
     }
 
-    private assembleRenderInfo(remaining: number): RenderInfo {
-        if (!this._currentAudio
-            || !this._currentAudio.buffer
-            || !this._training) return defaultRenderInfo;
-        const completion = this._songOffset / this._currentAudio.buffer.duration;
+    private assembleRenderInfo(remaining: number, completion: number): RenderInfo {
+        if (!this._training) return defaultRenderInfo;
         const song = this._training.Content[this._currentSongIndex];
         const name = song.Path;
         const totalBeats = this._songOffset * song.Tempo / 60
@@ -246,7 +243,7 @@ class State {
         if (song.Intro > 0) {
             const remaining = Math.ceil(song.Intro - totalBeats);
             if (remaining > 0) {
-                intro = remaining;
+                intro = remaining - 1;
             }
         }
         let disp = "";
@@ -271,13 +268,14 @@ class State {
 
     async render(): Promise<RenderInfo> {
         if (!this._currentAudio
-            || !this._currentAudio.buffer) return defaultRenderInfo;
+            || !this._currentAudio.buffer) return this.assembleRenderInfo(0,0);
         const now = this._audioContext.currentTime;
         if (this._isPlaying) this._songOffset = now - this._startTime;
         const currentRemaining = this._currentAudio.buffer.duration - this._songOffset;
         if (currentRemaining < 1) this._scheduleNext();
         if (currentRemaining < 0.01) await this._shiftQueue();
-        return this.assembleRenderInfo(currentRemaining);
+        const completion = this._songOffset / this._currentAudio.buffer.duration;
+        return this.assembleRenderInfo(currentRemaining, completion);
     }
 
     async playNext() {
@@ -314,7 +312,9 @@ const file_selector = document.getElementById("file-selector");
 
 const remainingDisplay = document.getElementById("remaining-display");
 const introDisplay = document.getElementById("intro-display");
+const introTextElement = document.getElementById("intro-text");
 const instDisplay = document.getElementById("instruction-display");
+const instTextElement = document.getElementById("instruction-text");
 const beatDisplay = document.getElementById("beat-display");
 const nameDisplay = document.getElementById("name-display");
 const remainingIndicator = document.getElementById("remaining-indicator");
@@ -348,7 +348,15 @@ function setControlState() {
     }
     
     if(!playButton) return;
-    playButton.innerText = state.isPlaying() ? "Pause" : "Play";
+    let span = playButton.children[0];
+    let icon = span.children[0];
+    if (state.isPlaying()) {
+        icon.classList.remove("fa-play");
+        icon.classList.add("fa-pause");
+    } else {
+        icon.classList.remove("fa-pause");
+        icon.classList.add("fa-play");
+    }
 }
 
 async function render() {
@@ -357,7 +365,9 @@ async function render() {
         || !instDisplay
         || !beatDisplay
         || !nameDisplay
-        || !remainingIndicator) return;
+        || !remainingIndicator
+        || !introTextElement
+        || !instTextElement) return;
 
     const renderInfo = await state.render();
     let minutes = Math.floor(renderInfo.remaining / 60);
@@ -371,14 +381,18 @@ async function render() {
     nameDisplay.innerText = renderInfo.SongName;
     remainingIndicator.setAttribute("value", (renderInfo.completion * 100).toString())
     if (renderInfo.introcountdown > 0) {
-        introDisplay.innerText = renderInfo.introcountdown.toString();
+        introDisplay.classList.remove("is-hidden");
+        introTextElement.innerText = `Vorlauf - Start in ${renderInfo.introcountdown}`;
     } else {
-        introDisplay.innerText = "";
+        introDisplay.classList.add("is-hidden");
+        introTextElement.innerText = "";
     }
     if (renderInfo.displaycountdown > 0 && renderInfo.displaytext != "") {
-        instDisplay.innerText = `${renderInfo.displaytext} - ${renderInfo.displaycountdown}`;
+        instDisplay.classList.remove("is-hidden");
+        instTextElement.innerText = `${renderInfo.displaytext} - ${renderInfo.displaycountdown}`;
     } else {
-        instDisplay.innerText = "";
+        instDisplay.classList.add("is-hidden");
+        instTextElement.innerText = "";
     }
     setControlState();
     window.requestAnimationFrame(render);

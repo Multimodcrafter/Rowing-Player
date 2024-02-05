@@ -7,22 +7,97 @@
         <link rel="stylesheet" href="css/mystyles.css" />
         <link rel="manifest" href="rowingplayer.json" />
         <link rel="icon" href="rowingplayer.svg" />
+        <link rel="stylesheet" href="css/fontawesome.min.css" />
+        <link rel="stylesheet" href="css/solid.min.css" />
     </head>
     <body>
-        <input type="file" id="file-selector" />
-        
-        <p id="name-display"></p>
-        <p id="remaining-display"></p>
-        <progress id="remaining-indicator" value="0" max="100"></progress>
-        <p id="intro-display"></p>
-        <p id="beat-display"></p>
-        <p id="instruction-display"></p>
+        <section class="section">
+            <div class="container">
+                <div class="columns is-centered">
+                    <div class="column is-half">
+                        <div class="box">
+                            <h1 class="title">Rowing Player</h1>
+                            <div class="file is-danger is-fullwidth">
+                                <label class="file-label is-fullwidth">
+                                <input class="file-input" type="file" id="file-selector" />
+                                <span class="file-cta is-fullwidth">
+                                    <span class="file-icon">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    </span>
+                                    <span class="file-label">
+                                    Training Laden
+                                    </span>
+                                </span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="box">
+                            <p class="block">
+                                <span id="name-display"></span> - <span id="remaining-display"></span>
+                            </p>
+                            <progress id="remaining-indicator" value="0" max="100" class="progress is-primary block"></progress>
+                        </div>
+                        
+                        <div class="box">
+                            <div class="columns is-centered is-hidden" id="intro-display">
+                                <p class="column is-narrow" id="intro-text"></p>
+                            </div>
+                            <div class="columns is-centered">
+                                <p class="column is-narrow is-size-1 has-text-weight-bold" id="beat-display"></p>
+                            </div>
+                        </div>
 
-        <button id="play-button"> Play / Pause </button>
-        <button id="reset-button"> Reset </button>
-        <button id="previous-button"> Previous </button>
-        <button id="next-button"> Next </button>
+                        <div class="box" id="instruction-display">
+                            <p id="instruction-text"></p>
+                        </div>
+
+                        <div class="box">
+                            <div class="buttons is-centered">
+                                <button class="button is-rounded" id="previous-button">
+                                    <span class="icon">
+                                        <i class="fas fa-backward-step fa-lg"></i>
+                                    </span>
+                                </button>
+                                <button class="button is-primary is-rounded is-large" id="play-button">
+                                    <span class="icon">
+                                        <i class="fas fa-play fa-lg"></i>
+                                    </span>
+                                </button>
+                                <button class="button is-rounded" id="next-button">
+                                    <span class="icon">
+                                        <i class="fas fa-forward-step fa-lg"></i>
+                                    </span>
+                                </button>
+                            </div>
+                            <button class="button is-danger" id="reset-button"> Reset </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <footer class="footer">
+            <div class="content has-text-centered">
+                <p>
+                    Rowing Player by Robin Hänni
+                </p>
+            </div>
+        </footer>
         
         <script src="js/bundle.js" defer></script>
+        <script>
+            if ("serviceWorker" in navigator) {
+                navigator.serviceWorker.register("js/sw.js").then(
+                  (registration) => {
+                    console.log("Service worker registration successful:", registration);
+                  },
+                  (error) => {
+                    console.error(`Service worker registration failed: ${error}`);
+                  },
+                );
+              } else {
+                console.error("Service workers are not supported.");
+              }              
+        </script>
     </body>
 </html>

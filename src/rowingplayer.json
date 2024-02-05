@@ -11,7 +11,7 @@
         {
             "src": "rowingplayer.svg",
             "sizes": "any",
-            "purpose": "maskable"
+            "purpose": "any"
         }
     ]
 }

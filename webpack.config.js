@@ -35,7 +35,10 @@ module.exports = {
             { from: 'src/sw.js', to: 'js' }, 
             { from: "src/index.html" },
             { from: "src/rowingplayer.json" },
-            { from: "src/rowingplayer.svg" }
+            { from: "src/rowingplayer.svg" },
+            { from: "src/solid.min.css", to: "css" },
+            { from: "src/fontawesome.min.css", to: "css" },
+            { from: "src/webfonts", to: "webfonts" }
         ]
     })
   ]

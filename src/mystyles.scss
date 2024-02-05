@@ -1,2 +1,23 @@
 @charset "utf-8";
+
+$blue: #0c66c7;
+$black: #2a2c34;
+$white: #ffffff;
+$accent: #343742;
+$light-accent: #9e9fa3;
+$lime: #79d234;
+$red: #de2a2a;
+
+$background: $black;
+$body-background-color: $black;
+$primary: $blue;
+$dark: $accent;
+$light: $light-accent;
+$text: $white;
+$text-strong: $white;
+$success: $lime;
+$danger: $red;
+$scheme-main: $accent;
+$scheme-main-bis: $accent;
+
 @import "~bulma/bulma";
