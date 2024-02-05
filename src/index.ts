@@ -135,8 +135,11 @@ class State {
         try {
             this._isBusy = true;
             const zip = new JSZip();
+            console.log("Loading file: " + target.files[0]);
             this._trainingFile = await zip.loadAsync(target.files[0]);
+            console.log("Zip file loaded, loading training.json");
             this._training = await this._loadTrainingFromZip();
+            console.log("Load completed, initializing state");
             this._initialize();
         } catch (err) {
             console.log(`error: ${err}`);
@@ -355,7 +358,10 @@ function setControlState() {
         playButton?.removeAttribute("disabled");
     }
     
-    if(!playButton) return;
+    if(!playButton) {
+        console.error("Play button not found");
+        return;
+    }
     let span = playButton.children[0];
     let icon = span.children[0];
     if (state.isPlaying()) {
@@ -432,7 +438,9 @@ async function previous() {
 }
 
 async function chooseTraining(evt: Event) {
+    console.log("Selected training file changed. Initiating load...");
     await state.chooseTraining(evt);
+    console.log("File change handler complete");
 }
 
 function selectFile() {
