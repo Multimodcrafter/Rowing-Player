@@ -9,6 +9,7 @@ interface Display {
 
 interface Song {
     Path: string,
+    Name: string,
     Tempo: number,
     Intro: number,
     Instructions: Display[],
@@ -20,6 +21,7 @@ interface Training {
 }
 
 interface RenderInfo {
+    TrainingName: string,
     SongName: string,
     remaining: number,
     completion: number,
@@ -42,6 +44,7 @@ function displayIsValid(disp: any): disp is Display {
 
 function songIsValid(song: any): song is Song {
     if (typeof song.Path !== "string") return false;
+    if (typeof song.Name !== "string") return false;
     if (typeof song.Tempo !== "number") return false;
     if (typeof song.Intro !== "number") return false;
     if (!isIterable(song.Instructions)) return false;
@@ -61,6 +64,7 @@ function trainingIsValid(obj: any): obj is Training {
 }
 
 const defaultRenderInfo: RenderInfo = {
+    TrainingName: "Kein Training geladen",
     SongName: "Kein Song geladen",
     remaining: 0,
     completion: 0,
@@ -236,7 +240,8 @@ class State {
     private assembleRenderInfo(remaining: number, completion: number): RenderInfo {
         if (!this._training) return defaultRenderInfo;
         const song = this._training.Content[this._currentSongIndex];
-        const name = song.Path;
+        const songName = song.Name;
+        const trainingName = `Training '${this._training.Name}' geladen`;
         const totalBeats = this._songOffset * song.Tempo / 60
         const beat = Math.ceil(totalBeats % 4);
         let intro = 0;
@@ -256,9 +261,10 @@ class State {
             }
         }
         return {
+            TrainingName: trainingName,
             remaining: remaining,
             completion: completion,
-            SongName: name,
+            SongName: songName,
             beat: beat,
             displaycountdown: dispCt,
             displaytext: disp,
@@ -319,6 +325,7 @@ const instTextElement = document.getElementById("instruction-text");
 const beatDisplay = document.getElementById("beat-display");
 const nameDisplay = document.getElementById("name-display");
 const remainingIndicator = document.getElementById("remaining-indicator");
+const trainingNameDisplay = document.getElementById("training-name-display");
 
 const playButton = document.getElementById("play-button");
 const resetButton = document.getElementById("reset-button");
@@ -368,16 +375,9 @@ async function render() {
         || !nameDisplay
         || !remainingIndicator
         || !introTextElement
-        || !instTextElement) {
+        || !instTextElement
+        || !trainingNameDisplay) {
             console.error("some elements not found");
-            console.log(remainingDisplay);
-            console.log(introDisplay);
-            console.log(instDisplay);
-            console.log(beatDisplay);
-            console.log(nameDisplay);
-            console.log(remainingIndicator);
-            console.log(introTextElement);
-            console.log(instTextElement);
             return;
         }
 
@@ -391,6 +391,7 @@ async function render() {
     remainingDisplay.innerText = `${minutes}:${seconds.toString().padStart(2,'0')}`;
     beatDisplay.innerText = renderInfo.beat.toString();
     nameDisplay.innerText = renderInfo.SongName;
+    trainingNameDisplay.innerText = renderInfo.TrainingName;
     remainingIndicator.setAttribute("value", (renderInfo.completion * 100).toString())
     if (renderInfo.introcountdown > 0) {
         introDisplay.classList.remove("is-hidden");
