@@ -4,10 +4,13 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   mode: "production",
-  entry: './src/index.ts',
+  entry: {
+    player: './src/player.ts',
+    editor: './src/editor.ts'
+  },
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'js/bundle.js'
+    filename: 'js/[name].js'
   },
   module: {
     rules: [{
@@ -47,6 +50,7 @@ module.exports = {
         patterns: [
             { from: 'src/sw.js', to: 'js' }, 
             { from: "src/index.html" },
+            { from: "src/editor.html" },
             { from: "src/rowingplayer.json" },
             { from: "src/rowingplayer.svg" },
             { from: "src/solid.min.css", to: "css" },

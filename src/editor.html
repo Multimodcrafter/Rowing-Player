@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Rowing Player - Editor</title>
+        <link rel="stylesheet" href="css/mystyles.css" />
+        <link rel="manifest" href="rowingplayer.json" />
+        <link rel="icon" href="rowingplayer.svg" />
+        <link rel="stylesheet" href="css/fontawesome.min.css" />
+        <link rel="stylesheet" href="css/solid.min.css" />
+    </head>
+    <body>
+        <section class="section">
+            <div class="container">
+                <div class="columns is-centered">
+                    <div class="column is-half">
+                        <div class="box">
+                            <h1 class="title">Editor</h1>
+                            <a class="button is-primary is-fullwidth" href="/">Zurück zum Player</a>
+                        </div>
+
+                        <div class="box">
+                            <div class="field has-addons">
+                                <div class="control">
+                                    <button class="button is-primary">Datei wählen</button>
+                                </div>
+                                <div class="control">
+                                    <input class="input" type="text" />
+                                </div>
+                                <div class="control">
+                                    <input class="input" type="number" />
+                                </div>
+                                <div class="control">
+                                    <input class="input" type="number" />
+                                </div>
+                                <div class="control">
+                                    <button class="button is-danger"><span class="icon"><i class="fas fa-trash"></i></span></button>
+                                </div>
+                            </div>
+                            <button class="button is-primary is-fullwidth">Song hinzufügen</button>
+                        </div>
+
+                        <div class="box">
+                            <div class="notification is-light">
+                                <div class="field has-addons">
+                                    <div class="control">
+                                        <div class="select">
+                                            <select>
+                                                <option>Test</option>
+                                                <option>Other</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="control">
+                                        <button class="button is-primary"><span class="icon"><i class="fas fa-chevron-up"></i></span></button>
+                                    </div>
+                                    <div class="control">
+                                        <button class="button is-primary"><span class="icon"><i class="fas fa-chevron-down"></i></span></button>
+                                    </div>
+                                    <div class="control">
+                                        <button class="button is-primary"><span class="icon"><i class="fas fa-plus"></i></span></button>
+                                    </div>
+                                    <div class="control">
+                                        <button class="button is-danger"><span class="icon"><i class="fas fa-trash"></i></span></button>
+                                    </div>
+                                </div>
+                                <table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <td><input class="input" type="text" /></td>
+                                            <td><input class="input" type="number" /></td>
+                                            <td><button class="button is-danger"><span class="icon"><i class="fas fa-trash"></i></span></button></td>
+                                        </tr>
+                                        <tr>
+                                            <td><input class="input" type="text" /></td>
+                                            <td><input class="input" type="number" /></td>
+                                            <td><button class="delete"></button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <button class="button is-primary is-fullwidth">Song hinzufügen</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <footer class="footer">
+            <div class="content has-text-centered">
+                <p>
+                    Rowing Player by Robin Hänni
+                </p>
+                <p class="has-text-centered content has-text-light" id="version-display">v0</p>
+            </div>
+        </footer>
+        
+        <script src="js/editor.js" defer></script>
+        <script>
+            if ("serviceWorker" in navigator) {
+                navigator.serviceWorker.register("js/sw.js").then(
+                  (registration) => {
+                    console.log("Service worker registration successful:", registration);
+                  },
+                  (error) => {
+                    console.error(`Service worker registration failed: ${error}`);
+                  },
+                );
+              } else {
+                console.error("Service workers are not supported.");
+              }              
+        </script>
+    </body>
+</html>

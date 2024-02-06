@@ -1,25 +1,8 @@
 import * as JSZip from "jszip";
 import {VERSION} from "./sw";
+import { Song, Training, Display } from "./training";
 
 require('./mystyles.scss');
-
-interface Display {
-    Text: string,
-    Time: number,
-}
-
-interface Song {
-    Path: string,
-    Name: string,
-    Tempo: number,
-    Intro: number,
-    Instructions: Display[],
-}
-
-interface Training {
-    Name: string,
-    Content: Song[],
-}
 
 interface RenderInfo {
     TrainingName: string,
