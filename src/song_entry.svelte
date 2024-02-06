@@ -1,9 +1,12 @@
 <script lang="ts">
+    import { createEventDispatcher } from "svelte";
     import DisplayEntry from "./display_entry.svelte";
     import { Display } from "./training";
     export let songList: string[];
-    export let chosenSong: number = 0;
     export let instructions: Display[] = [];
+    export let chosenSong: string = "";
+
+    const dispatch = createEventDispatcher();
 
     function addInstruction() {
         instructions.push({Text: "", Time: 0});
@@ -23,23 +26,23 @@
         <div class="control">
             <div class="select">
                 <select bind:value={chosenSong}>
-                    {#each songList as song, idx}
-                    <option value={idx}>{song}</option>
+                    {#each songList as song}
+                    <option>{song}</option>
                     {/each}
                 </select>
             </div>
         </div>
         <div class="control">
-            <button class="button is-primary"><span class="icon"><i class="fas fa-chevron-up"></i></span></button>
+            <button class="button is-primary" on:click={() => dispatch('up')}><span class="icon"><i class="fas fa-chevron-up"></i></span></button>
         </div>
         <div class="control">
-            <button class="button is-primary"><span class="icon"><i class="fas fa-chevron-down"></i></span></button>
+            <button class="button is-primary" on:click={() => dispatch('down')}><span class="icon"><i class="fas fa-chevron-down"></i></span></button>
         </div>
         <div class="control">
-            <button class="button is-primary" on:click={addInstruction}><span class="icon"><i class="fas fa-plus"></i></span></button>
+            <button class="button is-success" on:click={addInstruction}>Text hinzufügen</button>
         </div>
         <div class="control">
-            <button class="button is-danger"><span class="icon"><i class="fas fa-trash"></i></span></button>
+            <button class="button is-danger" on:click={() => dispatch('delete')}><span class="icon"><i class="fas fa-trash"></i></span></button>
         </div>
     </div>
     {#if instructions.length > 0}

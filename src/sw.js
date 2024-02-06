@@ -1,4 +1,4 @@
-const VERSION = "0.1.4";
+const VERSION = "0.1.5";
 const CACHE_NAME = `rowing-player-${VERSION}`;
 
 module.exports = {
@@ -13,7 +13,7 @@ const APP_STATIC_RESOURCES = [
     "/css/fontawesome.min.css",
     "/css/solid.min.css",
     "/js/player.js",
-    "/js/editor.html",
+    "/js/editor.js",
     "/webfonts/fa-solid-900.ttf",
     "/webfonts/fa-solid-900.woff2",
     "/rowingplayer.svg"

@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { createEventDispatcher } from "svelte";
+
     export let songPath: string = "";
     export let songName: string = "";
     export let songTempo: number = 80;
@@ -7,14 +9,13 @@
     let chosenFiles: FileList;
     let fileChooser: HTMLElement;
 
+    const dispatch = createEventDispatcher();
+
     function songChosen() {
-        console.log("changed");
         if(!chosenFiles) return;
         songPath = chosenFiles[0].name;
-        console.log("song: " + songPath);
-        if(songName == "") {
-            songName = songPath;
-        }
+        songName = songPath;
+        dispatch('songchange');
     }
 
 </script>
