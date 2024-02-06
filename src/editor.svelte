@@ -2,7 +2,7 @@
     import FileEntry from "./file_entry.svelte";
     import SongEntry from "./song_entry.svelte";
     import {VERSION} from "./sw.js"
-    import { Display, Song } from "./training";
+    import { Display, Song, Training } from "./training";
 
     interface SongInstance {
         Instructions: Display[];
@@ -12,6 +12,7 @@
     let songNameList: string[] = [];
     let songList: Song[] = [];
     let contentList: SongInstance[] = [];
+    let trainingName: string = "";
 
     function addSong() {
         songList.push({Path: "", Name: "", Tempo: 80, Instructions: [], Intro: 0});
@@ -68,6 +69,37 @@
         }
     }
 
+    function download(blob: Blob, filename: string) {
+        const a = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }, 0);
+    }
+
+    function saveTraining() {
+        let training: Training = {
+            Name: trainingName,
+            Content: [],
+        };
+
+        for(const instance of contentList) {
+            const song = songList.find((song) => song.Path === instance.SongPath);
+            if(!song) continue;
+            let content = {...song};
+            content.Instructions = instance.Instructions;
+            training.Content.push(content);
+        }
+
+        const outFile = new Blob([JSON.stringify(training)], {type: "application/json"});
+        download(outFile, "training.json");
+    }
+
 </script>
 
 <section class="section">
@@ -105,6 +137,13 @@
                     <button class="button is-success is-fullwidth" on:click={addContent}>Wiederholung hinzufügen</button>
                 </div>
                 {/if}
+
+                <div class="box">
+                    <div class="field has-addons">
+                        <div class="control is-expanded"><input type="text" class="input" placeholder="Training name" bind:value={trainingName}/></div>
+                        <div class="control"><button class="button is-success" on:click={saveTraining}>Training speichern</button></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
