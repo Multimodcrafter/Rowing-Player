@@ -1,0 +1,54 @@
+<script lang="ts">
+    import DisplayEntry from "./display_entry.svelte";
+    import { Display } from "./training";
+    export let songList: string[];
+    export let chosenSong: number = 0;
+    export let instructions: Display[] = [];
+
+    function addInstruction() {
+        instructions.push({Text: "", Time: 0});
+        // update interface
+        instructions = instructions;
+    }
+
+    function removeInstruction(idx: number) {
+        instructions.splice(idx, 1);
+        //update interface
+        instructions = instructions;
+    }
+</script>
+
+<div class="notification is-light">
+    <div class="field has-addons">
+        <div class="control">
+            <div class="select">
+                <select bind:value={chosenSong}>
+                    {#each songList as song, idx}
+                    <option value={idx}>{song}</option>
+                    {/each}
+                </select>
+            </div>
+        </div>
+        <div class="control">
+            <button class="button is-primary"><span class="icon"><i class="fas fa-chevron-up"></i></span></button>
+        </div>
+        <div class="control">
+            <button class="button is-primary"><span class="icon"><i class="fas fa-chevron-down"></i></span></button>
+        </div>
+        <div class="control">
+            <button class="button is-primary" on:click={addInstruction}><span class="icon"><i class="fas fa-plus"></i></span></button>
+        </div>
+        <div class="control">
+            <button class="button is-danger"><span class="icon"><i class="fas fa-trash"></i></span></button>
+        </div>
+    </div>
+    {#if instructions.length > 0}
+    <table class="table">
+        <tbody>
+            {#each instructions as inst, idx}
+            <DisplayEntry bind:text={inst.Text} bind:time={inst.Time} on:click={()=>removeInstruction(idx)}/>
+            {/each}
+        </tbody>
+    </table>
+    {/if}
+</div>

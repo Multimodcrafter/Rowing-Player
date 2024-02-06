@@ -6,16 +6,17 @@ module.exports = {
   mode: "production",
   entry: {
     player: './src/player.ts',
-    editor: './src/editor.ts'
+    editor: './src/editor.js'
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'js/[name].js'
   },
   module: {
-    rules: [{
-      test: /\.scss$/,
-      use: [
+    rules: [
+      {
+        test: /\.scss$/,
+        use: [
           MiniCssExtractPlugin.loader,
           {
             loader: 'css-loader'
@@ -27,20 +28,30 @@ module.exports = {
             }
           }
         ]
-    },
-    {
-      test: /\.ts(x)?$/,
-      loader: 'ts-loader',
-      exclude: /node_modules/
-    }
+      },
+      {
+        test: /\.ts(x)?$/,
+        loader: 'ts-loader',
+        exclude: /node_modules/
+      },
+      {
+        test: /\.svelte$/,
+        loader: 'svelte-loader',
+        options: {
+          preprocess: require('svelte-preprocess')({})
+        }
+      }
     ]
   },
   resolve: {
     extensions: [
       '.tsx',
       '.ts',
-      '.js'
-    ]
+      '.js',
+      '.mjs',
+      '.svelte'
+    ],
+    conditionNames: ["svelte"]
   },
   plugins: [
     new MiniCssExtractPlugin({
