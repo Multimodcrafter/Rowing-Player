@@ -15,7 +15,7 @@
     let trainingName: string = "";
 
     function addSong() {
-        songList.push({Path: "", Name: "", Tempo: 80, Instructions: [], Intro: 0});
+        songList.push({Path: "", Name: "", Tempo: 20, Instructions: [], Intro: 0});
         //update interface
         songList = songList;
     }

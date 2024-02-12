@@ -3,7 +3,7 @@
 
     export let songPath: string = "";
     export let songName: string = "";
-    export let songTempo: number = 80;
+    export let songTempo: number = 20;
     export let songIntro: number = 0;
 
     let chosenFiles: FileList;

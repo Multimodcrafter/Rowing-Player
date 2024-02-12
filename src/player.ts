@@ -258,7 +258,7 @@ class State {
         const song = this._training.Content[this._currentSongIndex];
         const songName = song.Name;
         const trainingName = this._training.Name;
-        const totalBeats = this._songOffset * song.Tempo / 60
+        const totalBeats = this._songOffset * song.Tempo / 15
         const beat = Math.ceil(totalBeats % 4);
         let intro = 0;
         if (song.Intro > 0) {
