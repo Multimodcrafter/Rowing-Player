@@ -8,3 +8,6 @@ serve:
 test:
 	rm test/training.zip
 	cd test && zip -r training *
+
+clean:
+	rm -r dist

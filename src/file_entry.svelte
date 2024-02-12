@@ -13,10 +13,17 @@
     const dispatch = createEventDispatcher();
 
     function songChosen() {
+        const nameRe = /^(\d\d)(_\d+_)(.*)(\..*)/;
         if(!chosenFiles) return;
         songPath = chosenFiles[0].name;
-        songName = songPath;
+        const nameGroups = songPath.match(nameRe);
+        if(nameGroups) {
+            songName = `${nameGroups[1]} - ${nameGroups[3]}`;
+        } else {
+            songName = songPath;
+        }
         songFile = chosenFiles[0];
+        if(nameGroups) songTempo = Number.parseInt(nameGroups[1]);
         dispatch('songchange');
     }
 
