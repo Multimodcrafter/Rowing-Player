@@ -261,7 +261,8 @@ class State {
         const songName = song.Name;
         const trainingName = this._training.Name;
         const totalBeats = this._songOffset * song.Tempo / 15
-        const beat = Math.ceil(totalBeats % 4);
+        let beat = Math.ceil(totalBeats % 4);
+        if (beat == 0) beat = 1; //only happens in very rare cases where totalBeats is an exact multiple of 4
         let intro = 0;
         if (song.Intro > 0) {
             const remaining = Math.ceil(song.Intro - totalBeats);
