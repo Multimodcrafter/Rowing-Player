@@ -246,6 +246,8 @@ class State {
         this._currentSongIndex += 1;
         if (this._training.Content.length > this._currentSongIndex + 1) {
             this._nextAudio = await this._loadAudioFile(this._training.Content[this._currentSongIndex + 1].Path);
+        } else if (this._training.Content.length == this._currentSongIndex) {
+            this._initialize();
         } else {
             this._nextAudio = null;
         }
@@ -254,7 +256,7 @@ class State {
     }
 
     private assembleRenderInfo(remaining: number, completion: number): RenderInfo {
-        if (!this._training) return defaultRenderInfo;
+        if (!this._training || !this._training.Content[this._currentSongIndex]) return defaultRenderInfo;
         const song = this._training.Content[this._currentSongIndex];
         const songName = song.Name;
         const trainingName = this._training.Name;
@@ -294,9 +296,9 @@ class State {
         const now = this._audioContext.currentTime;
         if (this._isPlaying) this._songOffset = now - this._startTime;
         const currentRemaining = this._currentAudio.buffer.duration - this._songOffset;
+        const completion = this._songOffset / this._currentAudio.buffer.duration;
         if (currentRemaining < 1) this._scheduleNext();
         if (currentRemaining < 0.01) await this._shiftQueue();
-        const completion = this._songOffset / this._currentAudio.buffer.duration;
         return this.assembleRenderInfo(currentRemaining, completion);
     }
 

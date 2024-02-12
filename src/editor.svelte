@@ -1,4 +1,5 @@
 <script lang="ts">
+    import * as JSZip from "jszip";
     import FileEntry from "./file_entry.svelte";
     import SongEntry from "./song_entry.svelte";
     import {VERSION} from "./sw.js"
@@ -9,13 +10,18 @@
         SongPath: string;
     }
 
+    interface SongFile {
+        Song: Song;
+        File: File;
+    }
+
     let songNameList: string[] = [];
-    let songList: Song[] = [];
+    let songList: SongFile[] = [];
     let contentList: SongInstance[] = [];
     let trainingName: string = "";
 
     function addSong() {
-        songList.push({Path: "", Name: "", Tempo: 20, Instructions: [], Intro: 0});
+        songList.push({Song: {Path: "", Name: "", Tempo: 20, Instructions: [], Intro: 0}, File: new File([], "")});
         //update interface
         songList = songList;
     }
@@ -28,7 +34,7 @@
     }
 
     function updateNameList() {
-        const newList = songList.map((x) => x.Path);
+        const newList = songList.map((x) => x.Song.Path);
         if (songNameList.length < songList.length) {
             addContent();
             contentList[contentList.length - 1].SongPath = newList[newList.length - 1];
@@ -38,7 +44,7 @@
 
     function addContent() {
         if(songList.length == 0) return;
-        contentList.push({SongPath: songList[0].Path, Instructions: []});
+        contentList.push({SongPath: songList[0].Song.Path, Instructions: []});
         //update interface
         contentList = contentList;
     }
@@ -82,22 +88,29 @@
         }, 0);
     }
 
-    function saveTraining() {
+    async function saveTraining() {
         let training: Training = {
             Name: trainingName,
             Content: [],
         };
 
         for(const instance of contentList) {
-            const song = songList.find((song) => song.Path === instance.SongPath);
+            const song = songList.find((song) => song.Song.Path === instance.SongPath);
             if(!song) continue;
-            let content = {...song};
+            let content = {...song.Song};
             content.Instructions = instance.Instructions;
             training.Content.push(content);
         }
 
-        const outFile = new Blob([JSON.stringify(training)], {type: "application/json"});
-        download(outFile, "training.json");
+        const zip = new JSZip();
+
+        for(const song of songList) {
+            zip.file(song.Song.Path, song.File);
+        }
+
+        zip.file("training.json", JSON.stringify(training));
+        const outFile = await zip.generateAsync({type: "blob"});
+        download(outFile, "training.zip");
     }
 
 </script>
@@ -113,10 +126,11 @@
 
                 <div class="box">
                     {#each songList as song, idx}
-                        <FileEntry bind:songName={song.Name} 
-                                   bind:songPath={song.Path}
-                                   bind:songTempo={song.Tempo}
-                                   bind:songIntro={song.Intro}
+                        <FileEntry bind:songName={song.Song.Name} 
+                                   bind:songPath={song.Song.Path}
+                                   bind:songTempo={song.Song.Tempo}
+                                   bind:songIntro={song.Song.Intro}
+                                   bind:songFile={song.File}
                                    on:click={() => removeSong(idx)}
                                    on:songchange={updateNameList}/>
                     {/each}

@@ -5,6 +5,7 @@
     export let songName: string = "";
     export let songTempo: number = 20;
     export let songIntro: number = 0;
+    export let songFile: File = new File([], "");
 
     let chosenFiles: FileList;
     let fileChooser: HTMLElement;
@@ -15,6 +16,7 @@
         if(!chosenFiles) return;
         songPath = chosenFiles[0].name;
         songName = songPath;
+        songFile = chosenFiles[0];
         dispatch('songchange');
     }
 
