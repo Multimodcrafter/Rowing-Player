@@ -121,7 +121,7 @@
             <div class="column is-half">
                 <div class="box">
                     <h1 class="title">Editor</h1>
-                    <a class="button is-primary is-fullwidth" href="/">Zurück zum Player</a>
+                    <a class="button is-primary is-fullwidth" href="/~haenniro/">Zurück zum Player</a>
                 </div>
 
                 <div class="box">
