@@ -434,11 +434,11 @@ function setControlState() {
     if(state.isPlaying()) {
         requestWakeLock();
         headingBox?.classList.add("is-hidden");
-        document.body.classList.add("prevent-overscroll");
+        document.documentElement.classList.add("prevent-overscroll");
     } else {
         releaseWakeLock();
         headingBox?.classList.remove("is-hidden");
-        document.body.classList.remove("prevent-overscroll");
+        document.documentElement.classList.remove("prevent-overscroll");
     }
     
     if(!playButton) {
