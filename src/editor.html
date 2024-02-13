@@ -15,7 +15,7 @@
         <script src="js/editor.js" defer></script>
         <script>
             if ("serviceWorker" in navigator) {
-                navigator.serviceWorker.register("js/sw.js", {type: "module"}).then(
+                navigator.serviceWorker.register("sw.js", {type: "module"}).then(
                   (registration) => {
                     console.log("Service worker registration successful:", registration);
                   },

@@ -59,7 +59,7 @@ module.exports = {
     }),
     new CopyPlugin({
         patterns: [
-            { from: 'src/sw.js', to: 'js' }, 
+            { from: 'src/sw.js'}, 
             { from: "src/index.html" },
             { from: "src/editor.html" },
             { from: "src/rowingplayer.json" },

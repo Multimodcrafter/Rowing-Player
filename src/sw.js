@@ -12,7 +12,8 @@ const APP_STATIC_RESOURCES = [
     "/~haenniro/js/editor.js",
     "/~haenniro/webfonts/fa-solid-900.ttf",
     "/~haenniro/webfonts/fa-solid-900.woff2",
-    "/~haenniro/rowingplayer.svg"
+    "/~haenniro/rowingplayer.svg",
+    "/~haenniro/rowingplayer.json"
 ];
 
 self.addEventListener("install", (event) => {
@@ -50,6 +51,7 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
+    console.log("Fetch event fired");
     event.respondWith(
         (async () => {
         const cache = await caches.open(CACHE_NAME);
