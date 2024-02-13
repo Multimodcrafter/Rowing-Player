@@ -1,5 +1,5 @@
 import * as JSZip from "jszip";
-import {VERSION} from "./sw";
+import { VERSION } from "./sw";
 import { Song, Training, Display } from "./training";
 
 require('./mystyles.scss');

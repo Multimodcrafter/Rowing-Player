@@ -95,7 +95,7 @@
         <script src="js/player.js" defer></script>
         <script>
             if ("serviceWorker" in navigator) {
-                navigator.serviceWorker.register("js/sw.js").then(
+                navigator.serviceWorker.register("js/sw.js", {type: "module"}).then(
                   (registration) => {
                     console.log("Service worker registration successful:", registration);
                   },

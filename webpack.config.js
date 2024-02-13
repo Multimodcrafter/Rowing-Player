@@ -9,7 +9,7 @@ module.exports = {
     editor: './src/editor.js'
   },
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'dist/~haenniro/'),
     filename: 'js/[name].js'
   },
   module: {
