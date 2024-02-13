@@ -15,7 +15,17 @@
             <div class="container">
                 <div class="columns is-centered">
                     <div class="column is-half">
-                        <div class="box">
+                        <article class="message is-warning is-hidden" id="message-box">
+                            <div class="message-header">
+                                <p id="message-title">Warning</p>
+                                <button class="delete" id="message-dismiss"></button>
+                            </div>
+                            <div class="message-body" id="message-body">
+                                Hello world
+                            </div>
+                        </article>
+
+                        <div class="box" id="heading-box">
                             <h1 class="title is-5">Rowing Player - <span id="training-name-display"></span></h1>
                             <button class="button is-danger is-fullwidth" id="file-selector-button">
                                 <span class="icon">
@@ -27,7 +37,7 @@
                         </div>
 
                         <div class="box" id="instruction-display">
-                            <p id="instruction-text" class="has-text-weight-bold"></p>
+                            <p id="instruction-text" class="has-text-weight-bold is-size-4"></p>
                         </div>
                         
                         <div class="box">

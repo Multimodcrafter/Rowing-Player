@@ -155,7 +155,7 @@ class State {
             console.log("Load completed, initializing state");
             this._initialize();
         } catch (err) {
-            console.log(`error: ${err}`);
+            showMessage(`error: ${err}`, true);
         } finally {
             this._isBusy = false;
         }
@@ -345,11 +345,52 @@ const beatDisplay = document.getElementById("beat-display");
 const nameDisplay = document.getElementById("name-display");
 const remainingIndicator = document.getElementById("remaining-indicator");
 const trainingNameDisplay = document.getElementById("training-name-display");
+const headingBox = document.getElementById("heading-box");
+
+const messageBox = document.getElementById("message-box");
+const messageTitle = document.getElementById("message-title");
+const messageDismiss = document.getElementById("message-dismiss");
+const messageBody = document.getElementById("message-body");
 
 const playButton = document.getElementById("play-button");
 const resetButton = document.getElementById("reset-button");
 const nextButton = document.getElementById("next-button");
 const previousButton = document.getElementById("previous-button");
+
+let wakeLock: WakeLockSentinel | null = null;
+let wakeLockSupported = true;
+
+function showMessage(body: string, isError: boolean) {
+    if(!messageBody || ! messageTitle || !messageBox) return;
+    messageBody.innerText = body;
+    messageTitle.innerText = isError ? "Fehler" : "Warnung";
+    messageBox.classList.remove("is-hidden");
+}
+
+function dismissMessage() {
+    if(!messageBox) return;
+    messageBox.classList.add("is-hidden");
+}
+
+async function requestWakeLock() {
+    if(!wakeLockSupported || (wakeLock !== null && !wakeLock.released)) return; 
+    if(!('wakeLock' in navigator)) {
+        showMessage("Dein Browser hat keine Wakelock-Unterstützung. Das bedeutet, dass ich nicht verhindern kann, dass sich der Bildschirm deines Geräts nach einer gewissen Zeit ausschaltet. Denke daran immer mal wieder den Bildschirm zu berühren (sofern du ein Gerät mit Touchscreen hast).", false);
+        wakeLockSupported = false;
+        return;
+    }
+    try {
+        wakeLock = await navigator.wakeLock.request('screen');
+    } catch(err) {
+        showMessage(`${err}`, true);
+    }
+}
+
+async function releaseWakeLock() {
+    if(!wakeLockSupported || !wakeLock || wakeLock.released) return;
+    await wakeLock.release();
+    wakeLock = null;
+}
 
 function setControlState() {
     if (state.isBusy() || state.isPlaying()) {
@@ -370,11 +411,24 @@ function setControlState() {
 
     if (state.isBusy()) {
         playButton?.setAttribute("disabled", "true");
+        playButton?.classList.add("is-loading");
+        file_selectorButton?.classList.add("is-loading");
     } else {
         playButton?.removeAttribute("disabled");
+        playButton?.classList.remove("is-loading");
+        file_selectorButton?.classList.remove("is-loading");
+    }
+
+    if(state.isPlaying()) {
+        requestWakeLock();
+        headingBox?.classList.add("is-hidden");
+    } else {
+        releaseWakeLock();
+        headingBox?.classList.remove("is-hidden");
     }
     
     if(!playButton) {
+        showMessage("Die Applikation hat einen Defekt. Lade sie bitte neu. Wenn das Problem bestehen bleibt kontaktiere bitte den Entwickler", true);
         console.error("Play button not found");
         return;
     }
@@ -399,6 +453,7 @@ async function render() {
         || !introTextElement
         || !instTextElement
         || !trainingNameDisplay) {
+            showMessage("Die Applikation hat einen Defekt. Lade sie bitte neu. Wenn das Problem bestehen bleibt kontaktiere bitte den Entwickler", true);
             console.error("some elements not found");
             return;
         }
@@ -473,6 +528,7 @@ function initialize() {
     nextButton?.addEventListener("click", next);
     previousButton?.addEventListener("click", previous);
     file_selectorButton?.addEventListener("click", selectFile);
+    messageDismiss?.addEventListener("click", dismissMessage);
     window.requestAnimationFrame(render);
 }
 
