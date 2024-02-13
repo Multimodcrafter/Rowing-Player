@@ -9,8 +9,22 @@
 
     let chosenFiles: FileList;
     let fileChooser: HTMLElement;
+    const audioContext = new AudioContext();
 
     const dispatch = createEventDispatcher();
+
+    async function checkFile() {
+        const array_buffer = await songFile.arrayBuffer();
+        if(!array_buffer) throw `Could not load '${songPath} as array buffer`;
+        const audio_buffer = await audioContext.decodeAudioData(array_buffer);
+        if(!audio_buffer) throw `Could not load '${songPath}' as audio file`;
+        let roundedDuration = Math.round(audio_buffer.duration / 10) * 10;
+        if (Math.abs(roundedDuration - audio_buffer.duration) > 0.1) {
+            console.warn(`${songPath} is ${audio_buffer.duration} seconds long`);
+        } else {
+            console.log(`${songPath} is ok (${audio_buffer.duration} seconds long)`);
+        }
+    }
 
     function songChosen() {
         const nameRe = /^(\d\d)(_\d+_)(.*)(\..*)/;
@@ -24,6 +38,7 @@
         }
         songFile = chosenFiles[0];
         if(nameGroups) songTempo = Number.parseInt(nameGroups[1]);
+        checkFile();
         dispatch('songchange');
     }
 
