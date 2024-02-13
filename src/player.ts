@@ -236,7 +236,7 @@ class State {
         this._nextScheduled = true;
     }
 
-    private async _shiftQueue() {
+    private _shiftQueue() {
         if (! this._isPlaying
             || this._isBusy
             || !this._training) return;
@@ -245,7 +245,19 @@ class State {
         this._currentAudio = this._nextAudio;
         this._currentSongIndex += 1;
         if (this._training.Content.length > this._currentSongIndex + 1) {
-            this._nextAudio = await this._loadAudioFile(this._training.Content[this._currentSongIndex + 1].Path);
+            this._loadAudioFile(this._training.Content[this._currentSongIndex + 1].Path)
+                .then((audioFile) => {
+                    this._nextAudio = audioFile;
+                    this._nextScheduled = false;
+                    this._isBusy = false;
+                })
+                .catch((reason) => {
+                    showMessage(`Fehler beim Laden des nächsten Songs: ${reason}`, true);
+                    this._nextAudio = null;
+                    this._nextScheduled = false;
+                    this._isBusy = false;
+                });
+            return;
         } else if (this._training.Content.length == this._currentSongIndex) {
             this._initialize();
         } else {
