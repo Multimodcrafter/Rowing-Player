@@ -24,3 +24,7 @@ $input-color: $black;
 $table-background-color: rgba(0,0,0,0);
 
 @import "~bulma/bulma";
+
+.prevent-overscroll {
+    overscroll-behavior: contain;
+}

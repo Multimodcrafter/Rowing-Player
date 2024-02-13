@@ -434,9 +434,11 @@ function setControlState() {
     if(state.isPlaying()) {
         requestWakeLock();
         headingBox?.classList.add("is-hidden");
+        document.body.classList.add("prevent-overscroll");
     } else {
         releaseWakeLock();
         headingBox?.classList.remove("is-hidden");
+        document.body.classList.remove("prevent-overscroll");
     }
     
     if(!playButton) {
@@ -530,6 +532,13 @@ function selectFile() {
     file_selector?.click();
 }
 
+function preventAccidentalNavigation(event: Event) {
+    if (state.isPlaying()) {
+        event.preventDefault();
+        event.returnValue = true;
+    }
+}
+
 function initialize() {
     console.log("Hello from rowing player");
     const versionDisplay = document.getElementById("version-display")
@@ -542,6 +551,7 @@ function initialize() {
     file_selectorButton?.addEventListener("click", selectFile);
     messageDismiss?.addEventListener("click", dismissMessage);
     window.requestAnimationFrame(render);
+    addEventListener("beforeunload", preventAccidentalNavigation);
 }
 
 initialize();
