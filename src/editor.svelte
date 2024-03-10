@@ -4,6 +4,7 @@
     import SongEntry from "./song_entry.svelte";
     import {VERSION} from "./sw.js"
     import { Display, Song, Training } from "./training";
+    import {import_file} from "./data_manager";
 
     interface SongInstance {
         Instructions: Display[];
@@ -113,6 +114,17 @@
         download(outFile, "training.zip");
     }
 
+    let result = "";
+
+    async function import_song(evt: Event) {
+        console.log("Import triggered");
+        const picker = evt.target as HTMLInputElement;
+        if(!picker.files) return;
+        import_file(picker.files[0])
+        .then((val) => result = `Success: ${val}`)
+        .catch((reason) => result = `Error: ${reason}`);
+    }
+
 </script>
 
 <section class="section">
@@ -122,6 +134,8 @@
                 <div class="box">
                     <h1 class="title">Editor</h1>
                     <a class="button is-primary is-fullwidth" href="/~haenniro/">Zurück zum Player</a>
+                    <input type="file" on:change={import_song} />
+                    <p>{result}</p>
                 </div>
 
                 <div class="box">
