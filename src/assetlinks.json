@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "ch.orbit.rp",
+        "sha256_cert_fingerprints": ["79:F3:07:1B:DD:C6:3F:BB:00:F8:97:D4:BF:10:75:55:47:A9:3E:B4:0A:EA:56:27:88:1D:6F:7D:50:A9:9E:E4"]
+      }
+    }]
