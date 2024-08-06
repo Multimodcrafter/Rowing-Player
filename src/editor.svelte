@@ -2,58 +2,47 @@
     import * as JSZip from "jszip";
     import FileEntry from "./file_entry.svelte";
     import SongEntry from "./song_entry.svelte";
-    import {VERSION} from "./sw.js"
-    import { Display, Song, Training } from "./training";
-    import {import_file} from "./data_manager";
-
-    interface SongInstance {
-        Instructions: Display[];
-        SongPath: string;
-    }
-
-    interface SongFile {
-        Song: Song;
-        File: File;
-    }
+    import { VERSION } from "./sw.js";
+    import {
+        isSongInstance,
+        Song,
+        SongInstance,
+        Training,
+        TrainingInstance,
+    } from "./training";
+    import { DataStore, import_file } from "./data_manager";
+    import TrainingEntry from "./training_entry.svelte";
 
     let songNameList: string[] = [];
-    let songList: SongFile[] = [];
-    let contentList: SongInstance[] = [];
-    let trainingName: string = "";
+    let songList: Song[] = [];
+    let trainingList: Training[] = [];
+    let trainingNameList: string[] = [];
+    let editedTraining: Training = { Content: [], IsTemplate: false, Name: "" };
+    let db: DataStore = new DataStore();
+    db.Initialize()
+        .then(() => db.GetAllSongs())
+        .then((loadedSongs) => {
+            songList = loadedSongs;
+            songNameList = songList.map((song) => song.Name);
+            return db.GetAllTrainings();
+        })
+        .then((loadedTrainings) => {
+            trainingList = loadedTrainings.filter(
+                (training) => training.IsTemplate,
+            );
+            trainingNameList = trainingList.map((training) => training.Name);
+        });
 
-    function addSong() {
-        songList.push({Song: {Path: "", Name: "", Tempo: 20, Instructions: [], Intro: 0}, File: new File([], "")});
+    function addContent(content: SongInstance | TrainingInstance) {
+        editedTraining.Content.push(content);
         //update interface
-        songList = songList;
-    }
-
-    function removeSong(idx: number) {
-        songList.splice(idx, 1);
-        updateNameList();
-        //update interface
-        songList = songList;
-    }
-
-    function updateNameList() {
-        const newList = songList.map((x) => x.Song.Path);
-        if (songNameList.length < songList.length) {
-            addContent();
-            contentList[contentList.length - 1].SongPath = newList[newList.length - 1];
-        }
-        songNameList = newList;
-    }
-
-    function addContent() {
-        if(songList.length == 0) return;
-        contentList.push({SongPath: songList[0].Song.Path, Instructions: []});
-        //update interface
-        contentList = contentList;
+        editedTraining = editedTraining;
     }
 
     function removeContent(idx: number) {
-        contentList.splice(idx, 1);
+        editedTraining.Content.splice(idx, 1);
         //update interface
-        contentList = contentList;
+        editedTraining = editedTraining;
     }
 
     function swapArrayElements(array: any[], idx1: number, idx2: number) {
@@ -62,17 +51,17 @@
 
     function moveContentUp(idx: number) {
         if (idx > 0) {
-            swapArrayElements(contentList, idx, idx - 1);
+            swapArrayElements(editedTraining.Content, idx, idx - 1);
             //update interface
-            contentList = contentList;
+            editedTraining = editedTraining;
         }
     }
 
     function moveContentDown(idx: number) {
-        if (idx < contentList.length - 1) {
-            swapArrayElements(contentList, idx, idx + 1);
+        if (idx < editedTraining.Content.length - 1) {
+            swapArrayElements(editedTraining.Content, idx, idx + 1);
             //update interface
-            contentList = contentList;
+            editedTraining = editedTraining;
         }
     }
 
@@ -90,28 +79,7 @@
     }
 
     async function saveTraining() {
-        let training: Training = {
-            Name: trainingName,
-            Content: [],
-        };
-
-        for(const instance of contentList) {
-            const song = songList.find((song) => song.Song.Path === instance.SongPath);
-            if(!song) continue;
-            let content = {...song.Song};
-            content.Instructions = instance.Instructions;
-            training.Content.push(content);
-        }
-
-        const zip = new JSZip();
-
-        for(const song of songList) {
-            zip.file(song.Song.Path, song.File);
-        }
-
-        zip.file("training.json", JSON.stringify(training));
-        const outFile = await zip.generateAsync({type: "blob"});
-        download(outFile, "training.zip");
+        await db.StoreTraining(editedTraining);
     }
 
     let result = "";
@@ -119,12 +87,29 @@
     async function import_song(evt: Event) {
         console.log("Import triggered");
         const picker = evt.target as HTMLInputElement;
-        if(!picker.files) return;
-        import_file(picker.files[0])
-        .then((val) => result = `Success: ${val}`)
-        .catch((reason) => result = `Error: ${reason}`);
+        if (!picker.files) return;
+        const fileName = picker.files[0].name;
+        const song = {
+            Intro: 0,
+            Length: 0,
+            Name: fileName,
+            Path: fileName,
+            Tempo: 0,
+        };
+        Promise.all([
+            import_file(picker.files[0]),
+            db.StoreSong(song).then(() => {
+                songNameList.push(fileName);
+                songNameList = songNameList;
+                songList.push(song);
+                songList = songList;
+            }),
+        ])
+            .then((val) => {
+                result = `Success: ${val}`;
+            })
+            .catch((reason) => (result = `Error: ${reason}`));
     }
-
 </script>
 
 <section class="section">
@@ -133,43 +118,79 @@
             <div class="column is-half">
                 <div class="box">
                     <h1 class="title">Editor</h1>
-                    <a class="button is-primary is-fullwidth" href="/~haenniro/">Zurück zum Player</a>
+                    <a class="button is-primary is-fullwidth" href="/~haenniro/"
+                        >Zurück zum Player</a
+                    >
                     <input type="file" on:change={import_song} />
                     <p>{result}</p>
                 </div>
 
                 <div class="box">
-                    {#each songList as song, idx}
-                        <FileEntry bind:songName={song.Song.Name} 
-                                   bind:songPath={song.Song.Path}
-                                   bind:songTempo={song.Song.Tempo}
-                                   bind:songIntro={song.Song.Intro}
-                                   bind:songFile={song.File}
-                                   on:click={() => removeSong(idx)}
-                                   on:songchange={updateNameList}/>
+                    {#each editedTraining.Content as content, idx}
+                        {#if isSongInstance(content)}
+                            <SongEntry
+                                songList={songNameList}
+                                bind:instructions={content.Instructions}
+                                bind:chosenSong={content.SongName}
+                                on:up={() => moveContentUp(idx)}
+                                on:down={() => moveContentDown(idx)}
+                                on:delete={() => removeContent(idx)}
+                            />
+                        {:else}
+                            <TrainingEntry
+                                trainingList={trainingNameList}
+                                bind:chosenTraining={content.TrainingName}
+                                on:up={() => moveContentUp(idx)}
+                                on:down={() => moveContentDown(idx)}
+                                on:delete={() => removeContent(idx)}
+                            />
+                        {/if}
                     {/each}
-                    <button class="button is-success is-fullwidth" on:click={addSong}>Song hinzufügen</button>
+                    <div class="buttons">
+                        <button
+                            class="button is-success"
+                            on:click={() =>
+                                addContent({
+                                    SongName: songNameList[0],
+                                    Instructions: [],
+                                })}>Song hinzufügen</button
+                        >
+                        <button
+                            class="button is-success"
+                            on:click={() =>
+                                addContent({
+                                    TrainingName: trainingNameList[0],
+                                })}>Trainingsblock hinzufügen</button
+                        >
+                    </div>
                 </div>
 
-                {#if contentList.length > 0}
                 <div class="box">
-                    {#each contentList as content, idx}
-                        <SongEntry
-                            songList={songNameList}
-                            bind:instructions={content.Instructions}
-                            bind:chosenSong={content.SongPath}
-                            on:up={() => moveContentUp(idx)}
-                            on:down={() => moveContentDown(idx)}
-                            on:delete={() => removeContent(idx)}/>
-                    {/each}
-                    <button class="button is-success is-fullwidth" on:click={addContent}>Wiederholung hinzufügen</button>
-                </div>
-                {/if}
-
-                <div class="box">
+                    <div class="field">
+                        <label class="control">
+                            <input
+                                type="checkbox"
+                                bind:checked={editedTraining.IsTemplate}
+                            />
+                            Dieses Training fungiert als wiederverwendbarer Block
+                        </label>
+                    </div>
                     <div class="field has-addons">
-                        <div class="control is-expanded"><input type="text" class="input" placeholder="Training name" bind:value={trainingName}/></div>
-                        <div class="control"><button class="button is-success" on:click={saveTraining}>Training speichern</button></div>
+                        <div class="control is-expanded">
+                            <input
+                                type="text"
+                                class="input"
+                                placeholder="Training name"
+                                bind:value={editedTraining.Name}
+                            />
+                        </div>
+                        <div class="control">
+                            <button
+                                class="button is-success"
+                                on:click={saveTraining}
+                                >Training speichern</button
+                            >
+                        </div>
                     </div>
                 </div>
             </div>
@@ -178,9 +199,12 @@
 </section>
 <footer class="footer">
     <div class="content has-text-centered">
-        <p>
-            Rowing Player by Robin Hänni
+        <p>Rowing Player by Robin Hänni</p>
+        <p
+            class="has-text-centered content has-text-light"
+            id="version-display"
+        >
+            v{VERSION}
         </p>
-        <p class="has-text-centered content has-text-light" id="version-display">v{VERSION}</p>
     </div>
 </footer>

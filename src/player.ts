@@ -1,6 +1,7 @@
 import * as JSZip from "jszip";
 import { VERSION } from "./sw";
-import { Song, Training, Display } from "./training";
+import { Song, Training, Display, SongInstance, trainingIsValid, PlayableTraining } from "./training";
+import { DataStore } from "./data_manager";
 
 require('./mystyles.scss');
 
@@ -13,67 +14,6 @@ interface RenderInfo {
     displaytext: string,
     displaycountdown: number,
     introcountdown: number,
-}
-
-function isIterable(obj: any): boolean {
-    if (obj == null) return false;
-    return typeof obj[Symbol.iterator] === "function";
-}
-
-function displayIsValid(disp: any): disp is Display {
-    if (typeof disp.Text !== "string") {
-        console.log(disp.Text + " is not string");
-        return false;
-    }
-    if (typeof disp.Time !== "number") {
-        console.log(disp.Time + " is not number");
-        return false;
-    }
-    return true;
-}
-
-function songIsValid(song: any): song is Song {
-    if (typeof song.Path !== "string") {
-        console.log(song.Path + " is not string");
-        return false;
-    }
-    if (typeof song.Name !== "string"){
-        console.log(song.Name + " is not string");
-        return false;
-    }
-    if (typeof song.Tempo !== "number") {
-        console.log(song.Tempo + " is not number");
-        return false;
-    }
-    if (typeof song.Intro !== "number") {
-        console.log(song.Intro + " is not number");
-        return false;
-    }
-    if (!isIterable(song.Instructions)) {
-        console.log("instructions not iterable");
-        return false;
-    }
-    for (const inst of song.Instructions) {
-        if(!displayIsValid(inst)) return false;
-    }
-    return true;
-}
-
-function trainingIsValid(obj: any): obj is Training {
-    console.log("Validating the following training object:");
-    console.log(obj);
-    if (typeof obj.Name !== "string") {
-        console.log("Training name not string");
-        return false;
-    }
-    if (!isIterable(obj.Content)) {
-        console.log("Training content not iterable");
-        return false;
-    }
-    for (const song of obj.Content) {
-        if(!songIsValid(song)) return false;
-    }
-    return true;
 }
 
 const defaultRenderInfo: RenderInfo = {
@@ -90,7 +30,7 @@ const defaultRenderInfo: RenderInfo = {
 class State {
     private _currentAudio: AudioBufferSourceNode | null;
     private _nextAudio: AudioBufferSourceNode | null;
-    private _training: Training | null;
+    private _training: PlayableTraining | null;
     private _audioContext: AudioContext;
     private _trainingFile: JSZip | null;
     private _currentSongIndex: number;
@@ -100,6 +40,7 @@ class State {
     private _nextStartTime: number;
     private _nextScheduled: boolean;
     private _isBusy: boolean;
+    private _db: DataStore;
 
     constructor() {
         this._currentAudio = null;
@@ -114,6 +55,11 @@ class State {
         this._songOffset = 0;
         this._nextScheduled = false;
         this._isBusy = false;
+        this._db = new DataStore();
+    }
+
+    public async initialize() {
+        await this._db.Initialize();
     }
 
     private _initialize() {
@@ -130,7 +76,7 @@ class State {
     private async _loadTrainingFromZip(): Promise<Training> {
         const file_name = "training.json";
         const training_file = this._trainingFile?.file(file_name);
-        if(!training_file) throw `File '${file_name}' is missing`;
+        if (!training_file) throw `File '${file_name}' is missing`;
         const training_contents = await training_file.async("text");
         if (!training_contents) throw `File '${file_name}' does not contain valid text`;
         let training;
@@ -142,17 +88,12 @@ class State {
 
     async chooseTraining(evt: Event) {
         const target = evt.target as HTMLInputElement;
-        if (!target.files 
+        if (!target.files
             || this._isBusy) return;
 
         try {
             this._isBusy = true;
-            const zip = new JSZip();
-            console.log("Loading file: " + target.files[0].name);
-            this._trainingFile = await zip.loadAsync(target.files[0]);
-            console.log("Zip file loaded, loading training.json");
-            this._training = await this._loadTrainingFromZip();
-            console.log("Load completed, initializing state");
+            //TODO: load training from db
             this._initialize();
         } catch (err) {
             showMessage(`error: ${err}`, true);
@@ -163,9 +104,9 @@ class State {
 
     private async _loadAudioFile(path: string): Promise<AudioBufferSourceNode> {
         const audio_file = this._trainingFile?.file(path);
-        if(!audio_file) throw `Training referenced file '${path}' could not be found`;
+        if (!audio_file) throw `Training referenced file '${path}' could not be found`;
         const array_buffer = await audio_file.async("arraybuffer");
-        if(!array_buffer) throw `Could not load '${path} as array buffer`;
+        if (!array_buffer) throw `Could not load '${path} as array buffer`;
         const audio_buffer = await this._audioContext.decodeAudioData(array_buffer);
         const node = new AudioBufferSourceNode(this._audioContext, {
             buffer: audio_buffer,
@@ -175,25 +116,27 @@ class State {
     }
 
     async play() {
-        if (this._isPlaying 
-            || !this._training 
+        if (this._isPlaying
+            || !this._training
             || this._isBusy
             || this._training.Content.length <= this._currentSongIndex) return;
 
         this._isBusy = true;
-        const first = this._training.Content[this._currentSongIndex].Path;
+        const firstName = this._training.Content[this._currentSongIndex].SongName;
+        const first = (await this._db.GetSong(firstName)).Path;
         this._currentAudio = await this._loadAudioFile(first);
         const now = this._audioContext.currentTime;
         this._startTime = now - this._songOffset;
         this._currentAudio.start(now, this._songOffset);
         this._isPlaying = true;
-        
+
         if (this._training.Content.length <= this._currentSongIndex + 1) {
             this._isBusy = false;
             return;
         }
 
-        const second = this._training.Content[this._currentSongIndex + 1].Path;
+        const secondName = this._training.Content[this._currentSongIndex + 1].SongName;
+        const second = (await this._db.GetSong(secondName)).Path;
         this._nextAudio = await this._loadAudioFile(second);
         this._isBusy = false;
     }
@@ -225,19 +168,19 @@ class State {
     }
 
     private _scheduleNext() {
-        if (! this._isPlaying
+        if (!this._isPlaying
             || this._nextScheduled
             || !this._currentAudio
             || !this._currentAudio.buffer
             || !this._nextAudio) return;
-        
+
         this._nextStartTime = this._startTime + this._currentAudio.buffer.duration;
         this._nextAudio.start(this._nextStartTime);
         this._nextScheduled = true;
     }
 
     private _shiftQueue() {
-        if (! this._isPlaying
+        if (!this._isPlaying
             || this._isBusy
             || !this._training) return;
         this._isBusy = true;
@@ -245,7 +188,9 @@ class State {
         this._currentAudio = this._nextAudio;
         this._currentSongIndex += 1;
         if (this._training.Content.length > this._currentSongIndex + 1) {
-            this._loadAudioFile(this._training.Content[this._currentSongIndex + 1].Path)
+            const nextName = this._training.Content[this._currentSongIndex + 1].SongName;
+            this._db.GetSong(nextName)
+                .then((nextSong) => this._loadAudioFile(nextSong.Path))
                 .then((audioFile) => {
                     this._nextAudio = audioFile;
                     this._nextScheduled = false;
@@ -267,10 +212,11 @@ class State {
         this._isBusy = false;
     }
 
-    private assembleRenderInfo(remaining: number, completion: number): RenderInfo {
+    private async assembleRenderInfo(remaining: number, completion: number): Promise<RenderInfo> {
         if (!this._training || !this._training.Content[this._currentSongIndex]) return defaultRenderInfo;
-        const song = this._training.Content[this._currentSongIndex];
-        const songName = song.Name;
+        const songInstance = this._training.Content[this._currentSongIndex];
+        const songName = songInstance.SongName;
+        const song = await this._db.GetSong(songName);
         const trainingName = this._training.Name;
         const totalBeats = this._songOffset * song.Tempo / 15
         let beat = Math.ceil(totalBeats % 4);
@@ -284,7 +230,7 @@ class State {
         }
         let disp = "";
         let dispCt = 0;
-        for(const d of song.Instructions) {
+        for (const d of songInstance.Instructions) {
             if (this._songOffset < d.Time) {
                 disp = d.Text;
                 dispCt = Math.ceil(d.Time - this._songOffset);
@@ -305,7 +251,7 @@ class State {
 
     async render(): Promise<RenderInfo> {
         if (!this._currentAudio
-            || !this._currentAudio.buffer) return this.assembleRenderInfo(0,0);
+            || !this._currentAudio.buffer) return this.assembleRenderInfo(0, 0);
         const now = this._audioContext.currentTime;
         if (this._isPlaying) this._songOffset = now - this._startTime;
         const currentRemaining = this._currentAudio.buffer.duration - this._songOffset;
@@ -373,33 +319,33 @@ let wakeLock: WakeLockSentinel | null = null;
 let wakeLockSupported = true;
 
 function showMessage(body: string, isError: boolean) {
-    if(!messageBody || ! messageTitle || !messageBox) return;
+    if (!messageBody || !messageTitle || !messageBox) return;
     messageBody.innerText = body;
     messageTitle.innerText = isError ? "Fehler" : "Warnung";
     messageBox.classList.remove("is-hidden");
 }
 
 function dismissMessage() {
-    if(!messageBox) return;
+    if (!messageBox) return;
     messageBox.classList.add("is-hidden");
 }
 
 async function requestWakeLock() {
-    if(!wakeLockSupported || (wakeLock !== null && !wakeLock.released)) return; 
-    if(!('wakeLock' in navigator)) {
+    if (!wakeLockSupported || (wakeLock !== null && !wakeLock.released)) return;
+    if (!('wakeLock' in navigator)) {
         showMessage("Dein Browser hat keine Wakelock-Unterstützung. Das bedeutet, dass ich nicht verhindern kann, dass sich der Bildschirm deines Geräts nach einer gewissen Zeit ausschaltet. Denke daran immer mal wieder den Bildschirm zu berühren (sofern du ein Gerät mit Touchscreen hast).", false);
         wakeLockSupported = false;
         return;
     }
     try {
         wakeLock = await navigator.wakeLock.request('screen');
-    } catch(err) {
+    } catch (err) {
         showMessage(`${err}`, true);
     }
 }
 
 async function releaseWakeLock() {
-    if(!wakeLockSupported || !wakeLock || wakeLock.released) return;
+    if (!wakeLockSupported || !wakeLock || wakeLock.released) return;
     await wakeLock.release();
     wakeLock = null;
 }
@@ -431,7 +377,7 @@ function setControlState() {
         file_selectorButton?.classList.remove("is-loading");
     }
 
-    if(state.isPlaying()) {
+    if (state.isPlaying()) {
         requestWakeLock();
         headingBox?.classList.add("is-hidden");
         document.documentElement.classList.add("prevent-overscroll");
@@ -440,8 +386,8 @@ function setControlState() {
         headingBox?.classList.remove("is-hidden");
         document.documentElement.classList.remove("prevent-overscroll");
     }
-    
-    if(!playButton) {
+
+    if (!playButton) {
         showMessage("Die Applikation hat einen Defekt. Lade sie bitte neu. Wenn das Problem bestehen bleibt kontaktiere bitte den Entwickler", true);
         console.error("Play button not found");
         return;
@@ -467,10 +413,10 @@ async function render() {
         || !introTextElement
         || !instTextElement
         || !trainingNameDisplay) {
-            showMessage("Die Applikation hat einen Defekt. Lade sie bitte neu. Wenn das Problem bestehen bleibt kontaktiere bitte den Entwickler", true);
-            console.error("some elements not found");
-            return;
-        }
+        showMessage("Die Applikation hat einen Defekt. Lade sie bitte neu. Wenn das Problem bestehen bleibt kontaktiere bitte den Entwickler", true);
+        console.error("some elements not found");
+        return;
+    }
 
     const renderInfo = await state.render();
     let minutes = Math.floor(renderInfo.remaining / 60);
@@ -479,7 +425,7 @@ async function render() {
         minutes += 1;
         seconds = 0;
     }
-    remainingDisplay.innerText = `${minutes}:${seconds.toString().padStart(2,'0')}`;
+    remainingDisplay.innerText = `${minutes}:${seconds.toString().padStart(2, '0')}`;
     beatDisplay.innerText = renderInfo.beat.toString();
     nameDisplay.innerText = renderInfo.SongName;
     trainingNameDisplay.innerText = renderInfo.TrainingName;
@@ -542,7 +488,7 @@ function preventAccidentalNavigation(event: Event) {
 function initialize() {
     console.log("Hello from rowing player");
     const versionDisplay = document.getElementById("version-display")
-    if(versionDisplay) versionDisplay.innerText = `v${VERSION}`;
+    if (versionDisplay) versionDisplay.innerText = `v${VERSION}`;
     file_selector?.addEventListener("change", chooseTraining);
     playButton?.addEventListener("click", playPause);
     resetButton?.addEventListener("click", reset);
