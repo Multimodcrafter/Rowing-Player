@@ -185,6 +185,19 @@ export class DataStore {
         });
         return Promise.all([delete_file_promise, delete_row_promise]);
     }
+
+    public async DeleteTraining(name: string): Promise<Event> {
+        if (this.db == null) {
+            throw "DataStore not initialized";
+        }
+        const transaction = this.db.transaction("Trainings", "readwrite");
+        const trainingStore = transaction.objectStore("Trainings");
+        return new Promise((resolve, reject) => {
+            const request = trainingStore.delete(name);
+            request.onerror = reject;
+            request.onsuccess = resolve;
+        });
+    }
 }
 
 export async function import_file(input: File) {
@@ -215,4 +228,17 @@ async function delete_file(file_name: string) {
     const storage = navigator.storage;
     const root = await storage.getDirectory();
     await root.removeEntry(file_name);
+}
+
+function download(blob: Blob, filename: string) {
+    const a = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    }, 0);
 }

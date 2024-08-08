@@ -1,6 +1,4 @@
 <script lang="ts">
-    import * as JSZip from "jszip";
-    import FileEntry from "./file_entry.svelte";
     import SongEntry from "./song_entry.svelte";
     import { VERSION } from "./sw.js";
     import {
@@ -10,14 +8,17 @@
         Training,
         TrainingInstance,
     } from "./training";
-    import { DataStore, import_file } from "./data_manager";
+    import { DataStore } from "./data_manager";
     import TrainingEntry from "./training_entry.svelte";
     import SongBrowser from "./song_browser.svelte";
+    import TrainingBrowser from "./training_browser.svelte";
 
     let songList: Song[] = [];
     let trainingList: Training[] = [];
+    let templateTrainingList: Training[] = [];
     let editedTraining: Training = { Content: [], IsTemplate: false, Name: "" };
     let showSongBrowser: boolean = false;
+    let showTrainingBrowser: boolean = true;
     let db: DataStore = new DataStore();
     db.Initialize()
         .then(() => db.GetAllSongs())
@@ -26,7 +27,8 @@
             return db.GetAllTrainings();
         })
         .then((loadedTrainings) => {
-            trainingList = loadedTrainings.filter(
+            trainingList = loadedTrainings;
+            templateTrainingList = loadedTrainings.filter(
                 (training) => training.IsTemplate,
             );
         });
@@ -63,21 +65,13 @@
         }
     }
 
-    function download(blob: Blob, filename: string) {
-        const a = document.createElement("a");
-        const url = URL.createObjectURL(blob);
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(() => {
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-        }, 0);
-    }
-
     async function saveTraining() {
         await db.StoreTraining(editedTraining);
+        templateTrainingList = trainingList.filter(
+            (training) => training.IsTemplate,
+        );
+        trainingList = trainingList;
+        showTrainingBrowser = true;
     }
 </script>
 
@@ -88,9 +82,6 @@
                 <div class="box">
                     <h1 class="title">Editor</h1>
                     <div class="buttons">
-                        <a class="button is-primary" href="/~haenniro/"
-                            >Zurück zum Player</a
-                        >
                         <button
                             class="button"
                             on:click={() => (showSongBrowser = true)}
@@ -112,7 +103,7 @@
                             />
                         {:else}
                             <TrainingEntry
-                                {trainingList}
+                                trainingList={templateTrainingList}
                                 bind:chosenTraining={content.TrainingName}
                                 on:up={() => moveContentUp(idx)}
                                 on:down={() => moveContentDown(idx)}
@@ -165,6 +156,13 @@
                                 >Training speichern</button
                             >
                         </div>
+                        <div class="control">
+                            <button
+                                class="button is-danger"
+                                on:click={() => (showTrainingBrowser = true)}
+                                >Änderungen verwerfen</button
+                            >
+                        </div>
                     </div>
                 </div>
             </div>
@@ -183,4 +181,10 @@
     </div>
 </footer>
 
-<SongBrowser bind:show={showSongBrowser} bind:songs={songList} />
+<SongBrowser bind:show={showSongBrowser} bind:songs={songList} {db} />
+<TrainingBrowser
+    bind:show={showTrainingBrowser}
+    bind:trainingList
+    bind:editedTraining
+    {db}
+/>

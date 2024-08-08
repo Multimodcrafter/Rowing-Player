@@ -4,7 +4,7 @@
 
     export let show: boolean = false;
     let files: string[] = [];
-    let db: DataStore = new DataStore();
+    export let db: DataStore;
     export let songs: Song[] = [];
     let editedSong: Song = {
         Name: "",
@@ -13,7 +13,6 @@
         Length: 0,
         Path: "",
     };
-    db.Initialize();
     list_files()
         .then(async (values) => {
             for await (const name of values) {
