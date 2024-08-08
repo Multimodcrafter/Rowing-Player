@@ -14,9 +14,10 @@ export class DataStore {
             request.onerror = reject;
             request.onupgradeneeded = (_) => {
                 const db = request.result;
-                const songStore = db.createObjectStore("Songs", { keyPath: "Name" });
+                const songStore = db.createObjectStore("Songs", { keyPath: "Path" });
                 songStore.createIndex("Tempo", "Tempo", { unique: false });
                 songStore.createIndex("Intro", "Intro", { unique: false });
+                songStore.createIndex("Name", "Name", { unique: true });
                 db.createObjectStore("Trainings", { keyPath: "Name" });
             }
         })
@@ -32,8 +33,9 @@ export class DataStore {
         }
         const transaction = this.db.transaction("Songs");
         const songStore = transaction.objectStore("Songs");
+        const nameIndex = songStore.index("Name");
         return new Promise((resolve, reject) => {
-            const request = songStore.get(name as IDBValidKey);
+            const request = nameIndex.get(name as IDBValidKey);
             request.onsuccess = (_) => {
                 resolve(request.result);
             };
@@ -168,6 +170,21 @@ export class DataStore {
             await this.StoreSong(song);
         }
     }
+
+    public async DeleteSong(path: string): Promise<[void, unknown]> {
+        if (this.db == null) {
+            throw "DataStore not initialized";
+        }
+        const transaction = this.db.transaction("Songs", "readwrite");
+        const songStore = transaction.objectStore("Songs");
+        const delete_file_promise = delete_file(path);
+        const delete_row_promise = new Promise((resolve, reject) => {
+            const request = songStore.delete(path);
+            request.onerror = reject;
+            request.onsuccess = resolve;
+        });
+        return Promise.all([delete_file_promise, delete_row_promise]);
+    }
 }
 
 export async function import_file(input: File) {
@@ -186,4 +203,16 @@ export async function load_file(file_name: string): Promise<File> {
     const root = await storage.getDirectory();
     const target = await root.getFileHandle(file_name);
     return target.getFile();
+}
+
+export async function list_files(): Promise<AsyncIterableIterator<string>> {
+    const storage = navigator.storage;
+    const root = await storage.getDirectory();
+    return root.keys();
+}
+
+async function delete_file(file_name: string) {
+    const storage = navigator.storage;
+    const root = await storage.getDirectory();
+    await root.removeEntry(file_name);
 }

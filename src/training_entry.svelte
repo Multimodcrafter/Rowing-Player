@@ -1,18 +1,19 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
-    export let trainingList: string[];
+    import { Training } from "./training";
+    export let trainingList: Training[];
     export let chosenTraining: string = "";
 
     const dispatch = createEventDispatcher();
 </script>
 
-<div class="notification is-light">
+<div class="notification">
     <div class="field has-addons">
         <div class="control">
             <div class="select">
                 <select bind:value={chosenTraining}>
                     {#each trainingList as training}
-                        <option>{training}</option>
+                        <option value={training.Name}>{training.Name}</option>
                     {/each}
                 </select>
             </div>

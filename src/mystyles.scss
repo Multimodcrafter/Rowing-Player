@@ -1,29 +1,29 @@
 @charset "utf-8";
 
-$blue: #0c66c7;
-$black: #2a2c34;
+$black: #252831;
+$black-bis: #303440;
+$black-ter: #404450;
+$white-ter: #5c5f66;
+$white-bis: #9fa0a5;
 $white: #ffffff;
-$accent: #343742;
-$light-accent: #9e9fa3;
-$lime: #79d234;
-$red: #de2a2a;
+$blue: #0066cb;
+$green: #1a967a;
+$red: #e23642;
+$blue-accent: #015486;
 
-$background: $black;
-$body-background-color: $black;
-$primary: $blue;
-$dark: $accent;
-$light: $light-accent;
-$text: $white;
-$text-strong: $white;
-$success: $lime;
-$danger: $red;
-$scheme-main: $accent;
-$scheme-main-bis: $accent;
-$input-background-color: $white;
-$input-color: $black;
-$table-background-color: rgba(0,0,0,0);
 
-@import "~bulma/bulma";
+@use "../node_modules/bulma/sass" with ($black: $black,
+    $black-bis: $black-bis,
+    $black-ter: $black-ter,
+    $white-ter: $white-ter,
+    $white-bis: $white-bis,
+    $white: $white,
+    $turquoise: $blue,
+    $green: $green,
+    $red: $red,
+    $cyan: $blue-accent,
+);
+
 
 .prevent-overscroll {
     overscroll-behavior: contain;

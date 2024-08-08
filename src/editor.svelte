@@ -12,25 +12,23 @@
     } from "./training";
     import { DataStore, import_file } from "./data_manager";
     import TrainingEntry from "./training_entry.svelte";
+    import SongBrowser from "./song_browser.svelte";
 
-    let songNameList: string[] = [];
     let songList: Song[] = [];
     let trainingList: Training[] = [];
-    let trainingNameList: string[] = [];
     let editedTraining: Training = { Content: [], IsTemplate: false, Name: "" };
+    let showSongBrowser: boolean = false;
     let db: DataStore = new DataStore();
     db.Initialize()
         .then(() => db.GetAllSongs())
         .then((loadedSongs) => {
             songList = loadedSongs;
-            songNameList = songList.map((song) => song.Name);
             return db.GetAllTrainings();
         })
         .then((loadedTrainings) => {
             trainingList = loadedTrainings.filter(
                 (training) => training.IsTemplate,
             );
-            trainingNameList = trainingList.map((training) => training.Name);
         });
 
     function addContent(content: SongInstance | TrainingInstance) {
@@ -81,35 +79,6 @@
     async function saveTraining() {
         await db.StoreTraining(editedTraining);
     }
-
-    let result = "";
-
-    async function import_song(evt: Event) {
-        console.log("Import triggered");
-        const picker = evt.target as HTMLInputElement;
-        if (!picker.files) return;
-        const fileName = picker.files[0].name;
-        const song = {
-            Intro: 0,
-            Length: 0,
-            Name: fileName,
-            Path: fileName,
-            Tempo: 0,
-        };
-        Promise.all([
-            import_file(picker.files[0]),
-            db.StoreSong(song).then(() => {
-                songNameList.push(fileName);
-                songNameList = songNameList;
-                songList.push(song);
-                songList = songList;
-            }),
-        ])
-            .then((val) => {
-                result = `Success: ${val}`;
-            })
-            .catch((reason) => (result = `Error: ${reason}`));
-    }
 </script>
 
 <section class="section">
@@ -118,18 +87,23 @@
             <div class="column is-half">
                 <div class="box">
                     <h1 class="title">Editor</h1>
-                    <a class="button is-primary is-fullwidth" href="/~haenniro/"
-                        >Zurück zum Player</a
-                    >
-                    <input type="file" on:change={import_song} />
-                    <p>{result}</p>
+                    <div class="buttons">
+                        <a class="button is-primary" href="/~haenniro/"
+                            >Zurück zum Player</a
+                        >
+                        <button
+                            class="button"
+                            on:click={() => (showSongBrowser = true)}
+                            >Songs Durchsuchen...</button
+                        >
+                    </div>
                 </div>
 
                 <div class="box">
                     {#each editedTraining.Content as content, idx}
                         {#if isSongInstance(content)}
                             <SongEntry
-                                songList={songNameList}
+                                {songList}
                                 bind:instructions={content.Instructions}
                                 bind:chosenSong={content.SongName}
                                 on:up={() => moveContentUp(idx)}
@@ -138,7 +112,7 @@
                             />
                         {:else}
                             <TrainingEntry
-                                trainingList={trainingNameList}
+                                {trainingList}
                                 bind:chosenTraining={content.TrainingName}
                                 on:up={() => moveContentUp(idx)}
                                 on:down={() => moveContentDown(idx)}
@@ -151,7 +125,7 @@
                             class="button is-success"
                             on:click={() =>
                                 addContent({
-                                    SongName: songNameList[0],
+                                    SongName: songList[0].Name,
                                     Instructions: [],
                                 })}>Song hinzufügen</button
                         >
@@ -159,7 +133,7 @@
                             class="button is-success"
                             on:click={() =>
                                 addContent({
-                                    TrainingName: trainingNameList[0],
+                                    TrainingName: trainingList[0].Name,
                                 })}>Trainingsblock hinzufügen</button
                         >
                     </div>
@@ -208,3 +182,5 @@
         </p>
     </div>
 </footer>
+
+<SongBrowser bind:show={showSongBrowser} bind:songs={songList} />
