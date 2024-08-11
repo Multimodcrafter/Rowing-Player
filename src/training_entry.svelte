@@ -7,7 +7,7 @@
     const dispatch = createEventDispatcher();
 </script>
 
-<div class="notification">
+<div class="notification mb-2 p-3">
     <div class="field has-addons">
         <div class="control">
             <div class="select">

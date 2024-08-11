@@ -5,6 +5,7 @@
     export let songList: Song[];
     export let instructions: Display[] = [];
     export let chosenSong: string = "";
+    export let isPause: boolean;
 
     const dispatch = createEventDispatcher();
 
@@ -21,45 +22,57 @@
     }
 </script>
 
-<div class="notification">
+<div class="notification p-2 mb-2">
     <div class="field has-addons">
-        <div class="control">
-            <div class="select">
-                <select bind:value={chosenSong}>
-                    {#each songList as song}
-                        <option value={song.Name}
-                            >{song.Tempo} - {song.Name}</option
-                        >
-                    {/each}
-                </select>
+        {#if isPause}
+            <div class="control">
+                <button class="button is-static is-small">Pause</button>
             </div>
-        </div>
+        {:else}
+            <div class="control">
+                <div class="select is-small">
+                    <select bind:value={chosenSong}>
+                        {#each songList as song}
+                            <option value={song.Name}
+                                >{song.Tempo} - {song.Name}</option
+                            >
+                        {/each}
+                    </select>
+                </div>
+            </div>
+        {/if}
         <div class="control">
-            <button class="button is-primary" on:click={() => dispatch("up")}
+            <button
+                class="button is-primary is-small"
+                on:click={() => dispatch("up")}
                 ><span class="icon"><i class="fas fa-chevron-up"></i></span
                 ></button
             >
         </div>
         <div class="control">
-            <button class="button is-primary" on:click={() => dispatch("down")}
+            <button
+                class="button is-primary is-small"
+                on:click={() => dispatch("down")}
                 ><span class="icon"><i class="fas fa-chevron-down"></i></span
                 ></button
             >
         </div>
         <div class="control">
-            <button class="button is-success" on:click={addInstruction}
+            <button class="button is-success is-small" on:click={addInstruction}
                 ><span class="icon"><i class="fas fa-list-check"></i></span
                 ></button
             >
         </div>
         <div class="control">
-            <button class="button is-danger" on:click={() => dispatch("delete")}
+            <button
+                class="button is-danger is-small"
+                on:click={() => dispatch("delete")}
                 ><span class="icon"><i class="fas fa-trash"></i></span></button
             >
         </div>
     </div>
     {#if instructions.length > 0}
-        <table class="table">
+        <table class="table is-narrow">
             <tbody>
                 {#each instructions as inst, idx}
                     <DisplayEntry

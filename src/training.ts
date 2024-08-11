@@ -13,7 +13,8 @@ export interface Song {
 
 export interface SongInstance {
     SongName: string,
-    Instructions: Display[]
+    Instructions: Display[],
+    IsPause: boolean,
 }
 
 export interface TrainingInstance {
@@ -24,6 +25,7 @@ export interface Training {
     Name: string,
     IsTemplate: boolean,
     Content: (SongInstance | TrainingInstance)[],
+    PauseSong: string,
 }
 
 export interface PlayableTraining {
@@ -77,6 +79,10 @@ export function isSongInstance(songInstance: any): songInstance is SongInstance 
         console.log(songInstance.SongName + " is not string");
         return false;
     }
+    if (typeof songInstance.IsPause !== "boolean") {
+        console.log(songInstance.IsPause + " is not boolean");
+        return false;
+    }
     if (!isIterable(songInstance.Instructions)) {
         console.log("instructions not iterable");
         return false;
@@ -104,6 +110,10 @@ export function trainingIsValid(obj: any): obj is Training {
     }
     if (typeof obj.IsTemplate !== "boolean") {
         console.log(obj.IsTemplate + " is not boolean");
+        return false;
+    }
+    if (typeof obj.PauseSong !== "string") {
+        console.log("Training pause song not string");
         return false;
     }
     if (!isIterable(obj.Content)) {

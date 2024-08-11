@@ -16,7 +16,12 @@
     let songList: Song[] = [];
     let trainingList: Training[] = [];
     let templateTrainingList: Training[] = [];
-    let editedTraining: Training = { Content: [], IsTemplate: false, Name: "" };
+    let editedTraining: Training = {
+        Content: [],
+        IsTemplate: false,
+        Name: "",
+        PauseSong: "",
+    };
     let showSongBrowser: boolean = false;
     let showTrainingBrowser: boolean = true;
     let db: DataStore = new DataStore();
@@ -81,12 +86,34 @@
             <div class="column is-half">
                 <div class="box">
                     <h1 class="title">Editor</h1>
-                    <div class="buttons">
-                        <button
-                            class="button"
-                            on:click={() => (showSongBrowser = true)}
-                            >Songs Durchsuchen...</button
-                        >
+                    <div class="field is-grouped">
+                        <div class="field has-addons mb-0">
+                            <div class="control">
+                                <button class="button is-static"
+                                    >Pause Song:</button
+                                >
+                            </div>
+                            <div class="control">
+                                <div class="select">
+                                    <select
+                                        bind:value={editedTraining.PauseSong}
+                                    >
+                                        {#each songList as song}
+                                            <option value={song.Name}
+                                                >{song.Tempo} - {song.Name}</option
+                                            >
+                                        {/each}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="buttons">
+                            <button
+                                class="button"
+                                on:click={() => (showSongBrowser = true)}
+                                >Songs Durchsuchen...</button
+                            >
+                        </div>
                     </div>
                 </div>
 
@@ -95,6 +122,7 @@
                         {#if isSongInstance(content)}
                             <SongEntry
                                 {songList}
+                                isPause={content.IsPause}
                                 bind:instructions={content.Instructions}
                                 bind:chosenSong={content.SongName}
                                 on:up={() => moveContentUp(idx)}
@@ -118,7 +146,17 @@
                                 addContent({
                                     SongName: songList[0].Name,
                                     Instructions: [],
+                                    IsPause: false,
                                 })}>Song hinzufügen</button
+                        >
+                        <button
+                            class="button is-success"
+                            on:click={() =>
+                                addContent({
+                                    SongName: "",
+                                    Instructions: [],
+                                    IsPause: true,
+                                })}>Pause hinzufügen</button
                         >
                         <button
                             class="button is-success"
