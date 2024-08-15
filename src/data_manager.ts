@@ -248,6 +248,21 @@ export class DataStore {
         const outfile = await zip.generateAsync({ type: "blob" });
         download(outfile, name + ".zip");
     }
+
+    public async ImportTraining(archive: JSZip) {
+        const meta = archive.file("meta.json");
+        const metaContent = await meta?.async("text");
+        if (!metaContent) throw "meta.json could not be found in the archive or does not contain valid text.";
+        const metaObject = JSON.parse(metaContent);
+        await this.StoreSongs(metaObject.songs);
+        await this.StoreTrainings(metaObject.trainings);
+        for (const song of metaObject.songs) {
+            const song_file_blob = await archive.file(song.Path)?.async("blob");
+            if (!song_file_blob) throw "could not find song " + song.Path + " in archive";
+            const song_file = new File([song_file_blob], song.Path);
+            await import_file(song_file);
+        }
+    }
 }
 
 export async function import_file(input: File) {

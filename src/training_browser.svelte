@@ -1,4 +1,5 @@
 <script lang="ts">
+    import * as JSZip from "jszip";
     import { DataStore } from "./data_manager";
     import { Training } from "./training";
 
@@ -6,6 +7,9 @@
     export let trainingList: Training[] = [];
     export let editedTraining: Training;
     export let db: DataStore;
+
+    let fileChooser: HTMLElement;
+    let chosenFiles: FileList;
 
     async function DeleteTraining(name: string, idx: number) {
         await db.DeleteTraining(name);
@@ -30,6 +34,16 @@
         button.classList.add("is-loading");
         await db.ExportTraining(training);
         button.classList.remove("is-loading");
+    }
+
+    async function ImportTraining(evt: Event) {
+        if (!chosenFiles) return;
+        const button = evt.target as HTMLButtonElement;
+        button.classList.add("is-loading");
+        const zip = new JSZip();
+        const archive = await zip.loadAsync(chosenFiles[0]);
+        await db.ImportTraining(archive);
+        location.reload();
     }
 </script>
 
@@ -108,6 +122,18 @@
                 <button class="button is-success" on:click={NewTraining}
                     >Neues Training erstellen</button
                 >
+                <button
+                    class="button is-info"
+                    on:click={() => fileChooser.click()}
+                    >Training importieren</button
+                >
+                <input
+                    type="file"
+                    class="is-hidden"
+                    bind:this={fileChooser}
+                    bind:files={chosenFiles}
+                    on:change={ImportTraining}
+                />
                 <a class="button is-primary" href="/~haenniro/"
                     >Zurück zum Player</a
                 >
