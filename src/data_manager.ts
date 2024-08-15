@@ -1,4 +1,5 @@
-import { Song, Training } from "./training";
+import * as JSZip from "jszip";
+import { isSongInstance, isTrainingInstance, Song, Training } from "./training";
 
 export class DataStore {
     private db: IDBDatabase | null;
@@ -197,6 +198,55 @@ export class DataStore {
             request.onerror = reject;
             request.onsuccess = resolve;
         });
+    }
+
+    private async collect_subtrainings(name: string): Promise<Training[]> {
+        let result: Training[] = [];
+        const initial = await this.GetTraining(name);
+        result.push(initial);
+        for (const entry of initial.Content) {
+            if (!isTrainingInstance(entry)) continue;
+            const subtrainings = await this.collect_subtrainings(entry.TrainingName);
+            for (const subt of subtrainings) {
+                if (result.find((t) => t.Name == subt.Name) !== undefined) continue;
+                result.push(subt);
+            }
+        }
+        return result;
+    }
+
+    private async collect_training_songs(trainings: Training[]): Promise<Song[]> {
+        let result: Song[] = [];
+        for (const training of trainings) {
+            if (result.find((s) => s.Name == training.PauseSong) === undefined) {
+                const song = await this.GetSong(training.PauseSong);
+                result.push(song);
+            }
+            for (const entry of training.Content) {
+                if (!isSongInstance(entry) || entry.IsPause) continue;
+                if (result.find((s) => s.Name == entry.SongName) !== undefined) continue;
+                const song = await this.GetSong(entry.SongName);
+                result.push(song);
+            }
+        }
+        return result;
+    }
+
+    public async ExportTraining(name: string) {
+        const trainings = await this.collect_subtrainings(name);
+        const songs = await this.collect_training_songs(trainings);
+        const meta = { trainings: trainings, songs: songs };
+
+        const zip = new JSZip();
+        zip.file("meta.json", JSON.stringify(meta));
+
+        for (const song of songs) {
+            const song_file = await load_file(song.Path);
+            zip.file(song.Path, song_file);
+        }
+
+        const outfile = await zip.generateAsync({ type: "blob" });
+        download(outfile, name + ".zip");
     }
 }
 

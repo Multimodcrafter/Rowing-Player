@@ -18,10 +18,18 @@
             Name: "Neues Training",
             Content: [],
             IsTemplate: false,
+            PauseSong: "",
         };
         trainingList.push(editedTraining);
         trainingList = trainingList;
         show = false;
+    }
+
+    async function ExportTraining(evt: Event, training: string) {
+        const button = evt.target as HTMLButtonElement;
+        button.classList.add("is-loading");
+        await db.ExportTraining(training);
+        button.classList.remove("is-loading");
     }
 </script>
 
@@ -36,7 +44,7 @@
                 <thead>
                     <th>Training</th>
                     <th>Ist Vorlage</th>
-                    <th style="width: 90px;"></th>
+                    <th style="width: 120px;"></th>
                 </thead>
                 <tbody>
                     {#each trainingList as training, idx}
@@ -66,6 +74,17 @@
                                     >
                                         <span class="icon"
                                             ><i class="fas fa-pen"></i></span
+                                        >
+                                    </button>
+                                    <button
+                                        class="button is-info"
+                                        on:click={(evt) => {
+                                            ExportTraining(evt, training.Name);
+                                        }}
+                                    >
+                                        <span class="icon"
+                                            ><i class="fas fa-file-export"
+                                            ></i></span
                                         >
                                     </button>
                                     <button
