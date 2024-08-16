@@ -1,12 +1,12 @@
 <script lang="ts">
-    import { RenderInfo, AudioPlayer } from "./audio_player";
+    import { RenderInfo, AudioPlayer, defaultRenderInfo } from "./audio_player";
     import { VERSION } from "./sw";
     import { PlayableTraining } from "./training";
     import TrainingSelector from "./training_selector.svelte";
     require("./mystyles.scss");
 
     let player = new AudioPlayer(showMessage);
-    let renderInfo: RenderInfo;
+    let renderInfo: RenderInfo = defaultRenderInfo;
     let remMinutes = 0;
     let remSeconds = 0;
     let messageBody = "";

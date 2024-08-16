@@ -12,6 +12,17 @@ export interface RenderInfo {
     introcountdown: number;
 }
 
+export const defaultRenderInfo: RenderInfo = {
+    TrainingName: "Kein Training geladen",
+    SongName: "Kein Song geladen",
+    remaining: 0,
+    completion: 0,
+    beat: 1,
+    displaytext: "",
+    displaycountdown: 0,
+    introcountdown: 0,
+};
+
 async function readFileAsArrayBuffer(file: File): Promise<ArrayBuffer> {
     const reader = new FileReader();
     return new Promise((resolve, _) => {
@@ -48,13 +59,15 @@ export class AudioPlayer {
         this._nextStartTime = 0;
         this._songOffset = 0;
         this._nextScheduled = false;
-        this._isBusy = false;
+        this._isBusy = true;
         this._db = new DataStore();
         this._showMessage = showMessage;
+        this._initializeDb();
     }
 
-    public async initialize() {
+    private async _initializeDb() {
         await this._db.Initialize();
+        this._isBusy = false;
     }
 
     private _initialize() {
@@ -192,16 +205,7 @@ export class AudioPlayer {
     }
 
     private async assembleRenderInfo(remaining: number, completion: number): Promise<RenderInfo> {
-        if (!this._training || !this._training.Content[this._currentSongIndex]) return {
-            TrainingName: "Kein Training geladen",
-            SongName: "Kein Song geladen",
-            remaining: 0,
-            completion: 0,
-            beat: 1,
-            displaytext: "",
-            displaycountdown: 0,
-            introcountdown: 0,
-        };
+        if (!this._training || !this._training.Content[this._currentSongIndex]) return defaultRenderInfo;
         const songInstance = this._training.Content[this._currentSongIndex];
         const songName = songInstance.SongName;
         const song = await this._db.GetSong(songName);

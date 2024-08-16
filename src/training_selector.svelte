@@ -12,7 +12,7 @@
     export let selectedTraining: PlayableTraining;
 
     let db: DataStore = new DataStore();
-    let trainingList: Training[];
+    let trainingList: Training[] = [];
     const dispatch = createEventDispatcher();
 
     db.Initialize().then(async () => {
