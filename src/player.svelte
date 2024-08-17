@@ -185,12 +185,18 @@
                             Vorlauf - Start in {renderInfo.introcountdown}
                         </p>
                     </div>
-                    <div class="columns is-centered is-mobile">
+                    <div class="columns is-centered is-mobile is-vcentered">
+                        <p class="column has-text-centered is-size-3">
+                            {renderInfo.currentTempo}
+                        </p>
                         <p
-                            class="column is-narrow is-size-1 has-text-weight-bold"
+                            class="column is-size-1 has-text-weight-bold has-text-centered"
                             id="beat-display"
                         >
                             {renderInfo.beat.toString()}
+                        </p>
+                        <p class="column has-text-centered is-size-4">
+                            {renderInfo.nextTempo}
                         </p>
                     </div>
                 </div>

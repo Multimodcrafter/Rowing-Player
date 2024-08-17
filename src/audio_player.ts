@@ -10,6 +10,8 @@ export interface RenderInfo {
     displaytext: string;
     displaycountdown: number;
     introcountdown: number;
+    currentTempo: number;
+    nextTempo: number;
 }
 
 export const defaultRenderInfo: RenderInfo = {
@@ -21,6 +23,8 @@ export const defaultRenderInfo: RenderInfo = {
     displaytext: "",
     displaycountdown: 0,
     introcountdown: 0,
+    currentTempo: 0,
+    nextTempo: 0,
 };
 
 async function readFileAsArrayBuffer(file: File): Promise<ArrayBuffer> {
@@ -229,6 +233,12 @@ export class AudioPlayer {
                 break;
             }
         }
+        let nextTempo = 0;
+        if (this._currentSongIndex < this._training.Content.length - 1) {
+            const nextSongInstance = this._training.Content[this._currentSongIndex + 1];
+            const nextSong = await this._db.GetSong(nextSongInstance.SongName);
+            nextTempo = nextSong.Tempo;
+        }
         return {
             TrainingName: trainingName,
             remaining: remaining,
@@ -238,6 +248,8 @@ export class AudioPlayer {
             displaycountdown: dispCt,
             displaytext: disp,
             introcountdown: intro,
+            currentTempo: song.Tempo,
+            nextTempo: nextTempo,
         }
     }
 
