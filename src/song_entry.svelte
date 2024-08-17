@@ -5,6 +5,7 @@
     export let songList: Song[];
     export let instructions: Display[] = [];
     export let chosenSong: string = "";
+    export let volume: number = 1;
     export let isPause: boolean;
 
     const dispatch = createEventDispatcher();
@@ -26,11 +27,13 @@
     <div class="field has-addons">
         {#if isPause}
             <div class="control">
-                <button class="button is-static is-small">Pause</button>
+                <button class="button is-static is-small" style="width: 120px;"
+                    >Pause</button
+                >
             </div>
         {:else}
             <div class="control">
-                <div class="select is-small">
+                <div class="select is-small" style="width: 120px;">
                     <select bind:value={chosenSong}>
                         {#each songList as song}
                             <option value={song.Name}
@@ -41,6 +44,20 @@
                 </div>
             </div>
         {/if}
+        <div class="control">
+            <button class="button is-static is-small">Volume:</button>
+        </div>
+        <div class="control">
+            <input
+                class="input is-small"
+                type="number"
+                step="0.1"
+                max="1"
+                min="0"
+                style="width: 60px;"
+                bind:value={volume}
+            />
+        </div>
         <div class="control">
             <button
                 class="button is-primary is-small"

@@ -42,6 +42,7 @@ export class AudioPlayer {
     private _nextAudio: AudioBufferSourceNode | null;
     private _training: PlayableTraining | null;
     private _audioContext: AudioContext;
+    private _gainNode: GainNode;
     private _currentSongIndex: number;
     private _isPlaying: boolean;
     private _songOffset: number;
@@ -57,6 +58,8 @@ export class AudioPlayer {
         this._nextAudio = null;
         this._training = null;
         this._audioContext = new AudioContext();
+        this._gainNode = this._audioContext.createGain();
+        this._gainNode.connect(this._audioContext.destination);
         this._currentSongIndex = 0;
         this._isPlaying = false;
         this._startTime = 0;
@@ -107,7 +110,7 @@ export class AudioPlayer {
         const node = new AudioBufferSourceNode(this._audioContext, {
             buffer: audio_buffer,
         });
-        node.connect(this._audioContext.destination);
+        node.connect(this._gainNode);
         return node;
     }
 
@@ -118,12 +121,14 @@ export class AudioPlayer {
             || this._training.Content.length <= this._currentSongIndex) return;
 
         this._isBusy = true;
-        const firstName = this._training.Content[this._currentSongIndex].SongName;
+        const firstInstance = this._training.Content[this._currentSongIndex];
+        const firstName = firstInstance.SongName;
         const first = (await this._db.GetSong(firstName)).Path;
         this._currentAudio = await this._loadAudioFile(first);
         const now = this._audioContext.currentTime;
         this._startTime = now - this._songOffset;
         this._currentAudio.start(now, this._songOffset);
+        this._gainNode.gain.setValueAtTime(firstInstance.Volume, now);
         this._isPlaying = true;
 
         if (this._training.Content.length <= this._currentSongIndex + 1) {
@@ -171,7 +176,9 @@ export class AudioPlayer {
             || !this._nextAudio) return;
 
         this._nextStartTime = this._startTime + this._currentAudio.buffer.duration;
+        const nextVolume = this._training?.Content[this._currentSongIndex + 1].Volume ?? 1;
         this._nextAudio.start(this._nextStartTime);
+        this._gainNode.gain.setValueAtTime(nextVolume, this._nextStartTime);
         this._nextScheduled = true;
     }
 
@@ -274,6 +281,8 @@ export class AudioPlayer {
         this._nextStartTime = this._audioContext.currentTime;
         if (this._nextAudio) {
             this._nextAudio.start();
+            const newVolume = this._training?.Content[this._currentSongIndex + 1].Volume ?? 1;
+            this._gainNode.gain.setValueAtTime(newVolume, this._audioContext.currentTime);
         } else {
             this._isPlaying = false;
         }

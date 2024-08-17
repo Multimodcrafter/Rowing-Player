@@ -22,6 +22,7 @@
     async function resolveContent(
         training: Training,
         PauseSong: string,
+        PauseVolume: number,
     ): Promise<SongInstance[]> {
         let result: SongInstance[] = [];
 
@@ -29,12 +30,13 @@
             if (isTrainingInstance(entry)) {
                 const subtraining = await db.GetTraining(entry.TrainingName);
                 result = result.concat(
-                    await resolveContent(subtraining, PauseSong),
+                    await resolveContent(subtraining, PauseSong, PauseVolume),
                 );
             } else {
                 const newEntry = { ...entry };
                 if (entry.IsPause) {
                     newEntry.SongName = PauseSong;
+                    newEntry.Volume = PauseVolume;
                 }
                 result.push(newEntry);
             }
@@ -46,7 +48,11 @@
     async function SelectTraining(training: Training) {
         selectedTraining = {
             Name: training.Name,
-            Content: await resolveContent(training, training.PauseSong),
+            Content: await resolveContent(
+                training,
+                training.PauseSong,
+                training.PauseVolume,
+            ),
         };
         show = false;
         dispatch("trainingSelected");

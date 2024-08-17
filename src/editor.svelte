@@ -21,6 +21,7 @@
         IsTemplate: false,
         Name: "",
         PauseSong: "",
+        PauseVolume: 0.8,
     };
     let showSongBrowser: boolean = false;
     let showTrainingBrowser: boolean = true;
@@ -89,12 +90,10 @@
                     <div class="field is-grouped">
                         <div class="field has-addons mb-0">
                             <div class="control">
-                                <button class="button is-static"
-                                    >Pause Song:</button
-                                >
+                                <button class="button is-static">Pause:</button>
                             </div>
                             <div class="control">
-                                <div class="select">
+                                <div class="select" style="width: 120px;">
                                     <select
                                         bind:value={editedTraining.PauseSong}
                                     >
@@ -106,12 +105,27 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="control">
+                                <button class="button is-static">Volume:</button
+                                >
+                            </div>
+                            <div class="control">
+                                <input
+                                    class="input"
+                                    type="number"
+                                    step="0.1"
+                                    max="1"
+                                    min="0"
+                                    style="width: 70px;"
+                                    bind:value={editedTraining.PauseVolume}
+                                />
+                            </div>
                         </div>
                         <div class="buttons">
                             <button
                                 class="button"
                                 on:click={() => (showSongBrowser = true)}
-                                >Songs Durchsuchen...</button
+                                >Songs...</button
                             >
                         </div>
                     </div>
@@ -125,6 +139,7 @@
                                 isPause={content.IsPause}
                                 bind:instructions={content.Instructions}
                                 bind:chosenSong={content.SongName}
+                                bind:volume={content.Volume}
                                 on:up={() => moveContentUp(idx)}
                                 on:down={() => moveContentDown(idx)}
                                 on:delete={() => removeContent(idx)}
@@ -147,6 +162,7 @@
                                     SongName: songList[0].Name,
                                     Instructions: [],
                                     IsPause: false,
+                                    Volume: 1,
                                 })}>Song hinzufügen</button
                         >
                         <button
@@ -156,6 +172,7 @@
                                     SongName: "",
                                     Instructions: [],
                                     IsPause: true,
+                                    Volume: 1,
                                 })}>Pause hinzufügen</button
                         >
                         <button

@@ -15,6 +15,7 @@ export interface SongInstance {
     SongName: string,
     Instructions: Display[],
     IsPause: boolean,
+    Volume: number,
 }
 
 export interface TrainingInstance {
@@ -26,6 +27,7 @@ export interface Training {
     IsTemplate: boolean,
     Content: (SongInstance | TrainingInstance)[],
     PauseSong: string,
+    PauseVolume: number,
 }
 
 export interface PlayableTraining {
