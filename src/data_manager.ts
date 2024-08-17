@@ -106,8 +106,9 @@ export class DataStore {
         }
         const transaction = this.db.transaction("Songs");
         const songStore = transaction.objectStore("Songs");
+        const tempoIndex = songStore.index("Tempo");
         return new Promise((resolve, reject) => {
-            const request = songStore.getAll();
+            const request = tempoIndex.getAll();
             request.onsuccess = (_) => {
                 resolve(request.result);
             };
