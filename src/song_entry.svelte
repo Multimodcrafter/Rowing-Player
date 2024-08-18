@@ -34,7 +34,7 @@
         {:else}
             <div class="control">
                 <div class="select is-small" style="width: 120px;">
-                    <select bind:value={chosenSong}>
+                    <select bind:value={chosenSong} style="width: 120px;">
                         {#each songList as song}
                             <option value={song.Name}
                                 >{song.Tempo} - {song.Length} - {song.Name}</option
