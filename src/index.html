@@ -1,111 +1,34 @@
 <!DOCTYPE html>
 <html lang="de-CH">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Rowing Player</title>
-        <link rel="stylesheet" href="css/mystyles.css" />
-        <link rel="manifest" href="rowingplayer.json" />
-        <link rel="icon" href="rowingplayer.svg" />
-        <link rel="stylesheet" href="css/fontawesome.min.css" />
-        <link rel="stylesheet" href="css/solid.min.css" />
-    </head>
-    <body>
-        <section class="section">
-            <div class="container">
-                <div class="columns is-centered">
-                    <div class="column is-half">
-                        <article class="message is-warning is-hidden" id="message-box">
-                            <div class="message-header">
-                                <p id="message-title">Warning</p>
-                                <button class="delete" id="message-dismiss"></button>
-                            </div>
-                            <div class="message-body" id="message-body">
-                                Hello world
-                            </div>
-                        </article>
 
-                        <div class="box" id="heading-box">
-                            <h1 class="title is-5">Rowing Player - <span id="training-name-display"></span></h1>
-                            <button class="button is-danger is-fullwidth" id="file-selector-button">
-                                <span class="icon">
-                                    <i class="fas fa-folder-open"></i>
-                                </span>
-                                <span>Training Laden</span>
-                            </button>
-                            <input class="is-hidden" type="file" id="file-selector" />
-                        </div>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Rowing Player</title>
+    <link rel="stylesheet" href="css/mystyles.css" />
+    <link rel="manifest" href="rowingplayer.json" />
+    <link rel="icon" href="rowingplayer.svg" />
+    <link rel="stylesheet" href="css/fontawesome.min.css" />
+    <link rel="stylesheet" href="css/solid.min.css" />
+</head>
 
-                        <div class="box" id="instruction-display">
-                            <p id="instruction-text" class="has-text-weight-bold is-size-4"></p>
-                        </div>
-                        
-                        <div class="box">
-                            <div class="columns is-centered is-hidden is-mobile" id="intro-display">
-                                <p class="column is-narrow" id="intro-text"></p>
-                            </div>
-                            <div class="columns is-centered is-mobile">
-                                <p class="column is-narrow is-size-1 has-text-weight-bold" id="beat-display"></p>
-                            </div>
-                        </div>
-                        
-                        <div class="box">
-                            <p class="block">
-                                <span id="name-display"></span> - <span id="remaining-display"></span>
-                            </p>
-                            <progress id="remaining-indicator" value="0" max="100" class="progress is-primary block"></progress>
-                        </div>
-
-                        <div class="box">
-                            <div class="buttons is-centered">
-                                <button class="button is-light is-rounded" id="previous-button">
-                                    <span class="icon">
-                                        <i class="fas fa-backward-step fa-lg"></i>
-                                    </span>
-                                </button>
-                                <button class="button is-primary is-rounded is-large" id="play-button">
-                                    <span class="icon">
-                                        <i class="fas fa-play fa-lg"></i>
-                                    </span>
-                                </button>
-                                <button class="button is-light is-rounded" id="next-button">
-                                    <span class="icon">
-                                        <i class="fas fa-forward-step fa-lg"></i>
-                                    </span>
-                                </button>
-                            </div>
-                            <button class="button is-danger" id="reset-button"> Reset </button>
-                        </div>
-                        <div class="box">
-                            <a class="button is-primary is-fullwidth" href="/~haenniro/editor.html">Training erstellen</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <footer class="footer">
-            <div class="content has-text-centered">
-                <p>
-                    Rowing Player by Robin Hänni
-                </p>
-                <p class="has-text-centered content has-text-light" id="version-display">v0</p>
-            </div>
-        </footer>
-        
-        <script src="js/player.js" defer></script>
-        <script>
-            if ("serviceWorker" in navigator) {
-                navigator.serviceWorker.register("sw.js", {type: "module"}).then(
-                  (registration) => {
+<body>
+    <div id="app"></div>
+    <script src="js/player.js" defer></script>
+    <script>
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("sw.js", { type: "module" }).then(
+                (registration) => {
                     console.log("Service worker registration successful:", registration);
-                  },
-                  (error) => {
+                },
+                (error) => {
                     console.error(`Service worker registration failed: ${error}`);
-                  },
-                );
-              } else {
-                console.error("Service workers are not supported.");
-              }              
-        </script>
-    </body>
+                },
+            );
+        } else {
+            console.error("Service workers are not supported.");
+        }              
+    </script>
+</body>
+
 </html>

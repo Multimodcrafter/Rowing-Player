@@ -3,9 +3,9 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-  mode: "production",
+  mode: "development",
   entry: {
-    player: './src/player.ts',
+    player: './src/player.js',
     editor: './src/editor.js'
   },
   output: {
@@ -67,7 +67,7 @@ module.exports = {
         { from: "src/solid.min.css", to: "css" },
         { from: "src/fontawesome.min.css", to: "css" },
         { from: "src/webfonts", to: "webfonts" },
-        { from: "src/assetlinks.json", to: ".well-known" }
+        { from: "src/assetlinks.json", to: "../.well-known" }
       ]
     })
   ]

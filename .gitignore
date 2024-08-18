@@ -5,3 +5,4 @@ src/*.js
 src/*.js.map
 !src/sw.js
 !src/editor.js
+!src/player.js
