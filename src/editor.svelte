@@ -99,7 +99,8 @@
                                     >
                                         {#each songList as song}
                                             <option value={song.Name}
-                                                >{song.Tempo} - {song.Length} - {song.Name}</option
+                                                >{song.Tempo} - {#if song.Intro > 0}v{/if}{song.Length}
+                                                - {song.Name}</option
                                             >
                                         {/each}
                                     </select>

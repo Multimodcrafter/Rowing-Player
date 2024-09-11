@@ -45,7 +45,7 @@ function displayIsValid(disp: any): disp is Display {
         console.log(disp.Text + " is not string");
         return false;
     }
-    if (typeof disp.Time !== "number") {
+    if (typeof disp.Time !== "number" && typeof disp.Time !== null) {
         console.log(disp.Time + " is not number");
         return false;
     }

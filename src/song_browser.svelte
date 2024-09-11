@@ -71,7 +71,7 @@
     }
 
     async function songChosen() {
-        const nameRe = /^(\d\d)_(\d+)_([^\._]*)(.*)(Vorlauf)?(.*)/;
+        const nameRe = /^(\d\d)_(\d+)_([^\._]*)(_[Vv]orlauf)?(.*)/;
         if (!chosenFiles) return;
         importedSong.Path = chosenFiles[0].name;
         const nameGroups = importedSong.Path.match(nameRe);
@@ -79,7 +79,7 @@
             importedSong.Name = nameGroups[3];
             importedSong.Tempo = Number.parseInt(nameGroups[1]);
             importedSong.Length = Number.parseInt(nameGroups[2]);
-            importedSong.Intro = nameGroups[5] == undefined ? 0 : 32;
+            importedSong.Intro = nameGroups[4] == undefined ? 0 : 32;
         } else {
             importedSong.Name = importedSong.Path;
         }
