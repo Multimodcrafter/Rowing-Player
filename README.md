@@ -4,6 +4,8 @@ It is designed to play music files in succession without any noticable pauses in
 
 You can use/install the player from [here](https://spaceempire.vsos.ethz.ch/~haenniro).
 
+It can also be installed as an android app from [here](https://play.google.com/store/apps/details?id=ch.orbit.rp).
+
 ## Features
 - Display the current beat number to aid in synchronized rowing
 - Display a special "intro countdown" to help starting the training session in precise synchronization with the music

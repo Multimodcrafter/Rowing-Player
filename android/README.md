@@ -1,3 +1,5 @@
+[Process followed](https://developers.google.com/codelabs/pwa-in-play)
+
 To (re-)create the android project run:
 
 ```bash
