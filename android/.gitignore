@@ -1,0 +1,9 @@
+*.aab
+*.apk
+*.idsig
+.gradle/
+app/build/
+build/
+gradle/
+gradlew
+gradlew.bat
