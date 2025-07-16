@@ -2,7 +2,7 @@
 This is a PWA implementation of a music player using WebAudio.
 It is designed to play music files in succession without any noticable pauses in between and presents information to the user, which aims to aid in the leading of indoor rowing classes.
 
-You can use/install the player from [here](https://n.ethz.ch/~haenniro).
+You can use/install the player from [here](https://spaceempire.vsos.ethz.ch/~haenniro).
 
 ## Features
 - Display the current beat number to aid in synchronized rowing
