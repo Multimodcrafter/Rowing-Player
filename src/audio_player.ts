@@ -1,4 +1,4 @@
-import { PlayableTraining } from "./training";
+import type { PlayableTraining } from "./training";
 import { DataStore, load_file } from "./data_manager";
 
 export interface RenderInfo {

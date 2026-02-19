@@ -1,5 +1,5 @@
 import * as JSZip from "jszip";
-import { isSongInstance, isTrainingInstance, Song, Training } from "./training";
+import { isSongInstance, isTrainingInstance, type Song, type Training } from "./training";
 
 export class DataStore {
     private db: IDBDatabase | null;
