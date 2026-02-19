@@ -9,7 +9,7 @@ module.exports = {
     editor: './src/editor.js'
   },
   output: {
-    path: path.resolve(__dirname, 'dist/~haenniro/'),
+    path: path.resolve(__dirname, 'dist/'),
     filename: 'js/[name].js'
   },
   module: {
@@ -67,7 +67,7 @@ module.exports = {
         { from: "src/solid.min.css", to: "css" },
         { from: "src/fontawesome.min.css", to: "css" },
         { from: "src/webfonts", to: "webfonts" },
-        { from: "src/assetlinks.json", to: "../.well-known" }
+        { from: "src/assetlinks.json", to: ".well-known" }
       ]
     })
   ]
