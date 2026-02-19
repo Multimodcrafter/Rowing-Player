@@ -3,7 +3,7 @@ all:
 	npx webpack
 
 serve:
-	cd dist && npx http-server ./ -o ~haenniro/
+	cd dist && npx http-server ./ -o /
 
 test:
 	rm test/training.zip

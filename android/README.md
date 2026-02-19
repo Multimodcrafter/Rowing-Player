@@ -3,7 +3,7 @@
 To (re-)create the android project run:
 
 ```bash
-docker run --rm -ti -v .:/app ghcr.io/googlechromelabs/bubblewrap:latest init --manifest=https://spaceempire.vsos.ethz.ch/~haenniro/rowingplayer.json
+docker run --rm -ti -v .:/app ghcr.io/googlechromelabs/bubblewrap:latest init --manifest=https://rowing.joaro.ch/rowingplayer.json
 ```
 
 Then build it by running:

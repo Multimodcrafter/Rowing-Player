@@ -2,18 +2,18 @@ export const VERSION = "0.3.2";
 const CACHE_NAME = `rowing-player-${VERSION}`;
 
 const APP_STATIC_RESOURCES = [
-    "/~haenniro/",
-    "/~haenniro/index.html",
-    "/~haenniro/editor.html",
-    "/~haenniro/css/mystyles.css",
-    "/~haenniro/css/fontawesome.min.css",
-    "/~haenniro/css/solid.min.css",
-    "/~haenniro/js/player.js",
-    "/~haenniro/js/editor.js",
-    "/~haenniro/webfonts/fa-solid-900.ttf",
-    "/~haenniro/webfonts/fa-solid-900.woff2",
-    "/~haenniro/rowingplayer.svg",
-    "/~haenniro/rowingplayer.json"
+    "/",
+    "/index.html",
+    "/editor.html",
+    "/css/mystyles.css",
+    "/css/fontawesome.min.css",
+    "/css/solid.min.css",
+    "/js/player.js",
+    "/js/editor.js",
+    "/webfonts/fa-solid-900.ttf",
+    "/webfonts/fa-solid-900.woff2",
+    "/rowingplayer.svg",
+    "/rowingplayer.json"
 ];
 
 self.addEventListener("install", (event) => {

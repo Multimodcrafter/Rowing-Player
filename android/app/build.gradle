@@ -22,8 +22,8 @@ plugins {
 
 def twaManifest = [
     applicationId: 'ch.orbit.rp',
-    hostName: 'spaceempire.vsos.ethz.ch', // The domain being opened in the TWA.
-    launchUrl: '/~haenniro/', // The start path for the TWA. Must be relative to the domain.
+    hostName: 'rowing.joaro.ch', // The domain being opened in the TWA.
+    launchUrl: '/', // The start path for the TWA. Must be relative to the domain.
     name: 'Rowing Player', // The application name.
     launcherName: 'RP', // The name shown on the Android Launcher.
     themeColor: '#0C66C7', // The color used for the status bar.
@@ -57,8 +57,8 @@ android {
         applicationId "ch.orbit.rp"
         minSdkVersion 21
         targetSdkVersion 35
-        versionCode 7
-        versionName "7"
+        versionCode 10
+        versionName "10"
 
         // The name for the application
         resValue "string", "appName", twaManifest.name
@@ -76,12 +76,12 @@ android {
             // The URL the Web Manifest for the Progressive Web App that the TWA points to. This
             // is used by Chrome OS and Meta Quest to open the Web version of the PWA instead of
             // the TWA, as it will probably give a better user experience for non-mobile devices.
-            resValue "string", "webManifestUrl", 'https://spaceempire.vsos.ethz.ch/~haenniro/rowingplayer.json'
+            resValue "string", "webManifestUrl", 'https://rowing.joaro.ch/rowingplayer.json'
         
 
         
             // This is used by Meta Quest.
-            resValue "string", "fullScopeUrl", 'https://spaceempire.vsos.ethz.ch/~haenniro/'
+            resValue "string", "fullScopeUrl", 'https://rowing.joaro.ch/'
         
 
         

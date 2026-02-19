@@ -1,6 +1,6 @@
 {
   "packageId": "ch.orbit.rp",
-  "host": "spaceempire.vsos.ethz.ch",
+  "host": "rowing.joaro.ch",
   "name": "Rowing Player",
   "launcherName": "RP",
   "display": "standalone",
@@ -12,18 +12,18 @@
   "navigationDividerColorDark": "#000000",
   "backgroundColor": "#2A2C34",
   "enableNotifications": true,
-  "startUrl": "/~haenniro/",
-  "iconUrl": "https://spaceempire.vsos.ethz.ch/~haenniro/rowingplayer.svg",
+  "startUrl": "/",
+  "iconUrl": "https://rowing.joaro.ch/rowingplayer.svg",
   "splashScreenFadeOutDuration": 300,
   "signingKey": {
     "path": "/app/android.keystore",
     "alias": "android"
   },
-  "appVersionName": "7",
-  "appVersionCode": 7,
+  "appVersionName": "10",
+  "appVersionCode": 10,
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
-  "webManifestUrl": "https://spaceempire.vsos.ethz.ch/~haenniro/rowingplayer.json",
+  "webManifestUrl": "https://rowing.joaro.ch/rowingplayer.json",
   "fallbackType": "customtabs",
   "features": {},
   "alphaDependencies": {
@@ -32,7 +32,7 @@
   "enableSiteSettingsShortcut": true,
   "isChromeOSOnly": false,
   "isMetaQuest": false,
-  "fullScopeUrl": "https://spaceempire.vsos.ethz.ch/~haenniro/",
+  "fullScopeUrl": "https://rowing.joaro.ch/",
   "minSdkVersion": 21,
   "orientation": "portrait",
   "fingerprints": [],
@@ -41,5 +41,6 @@
   "protocolHandlers": [],
   "fileHandlers": [],
   "launchHandlerClientMode": "",
-  "appVersion": "7"
+  "displayOverride": [],
+  "appVersion": "10"
 }

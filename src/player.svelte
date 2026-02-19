@@ -266,7 +266,7 @@
                 <div class="box">
                     <a
                         class="button is-primary is-fullwidth"
-                        href="/~haenniro/editor.html">Trainings Editor</a
+                        href="/editor.html">Trainings Editor</a
                     >
                 </div>
             </div>

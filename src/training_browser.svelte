@@ -134,7 +134,7 @@
                     bind:files={chosenFiles}
                     on:change={ImportTraining}
                 />
-                <a class="button is-primary" href="/~haenniro/"
+                <a class="button is-primary" href="/"
                     >Zurück zum Player</a
                 >
             </div>
