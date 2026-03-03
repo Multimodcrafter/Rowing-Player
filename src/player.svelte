@@ -124,6 +124,7 @@
                             class="delete"
                             id="message-dismiss"
                             on:click={dismissMessage}
+                            aria-label="Fehlermeldung quittieren"
                         ></button>
                     </div>
                     <div class="message-body" id="message-body">
@@ -221,6 +222,7 @@
                         <button
                             class="button is-light is-rounded"
                             id="previous-button"
+                            aria-label="Vorheriges Stück"
                             disabled={player.isBusy() || !player.isPlaying()}
                             on:click={previous}
                         >
@@ -231,6 +233,7 @@
                         <button
                             class="button is-primary is-rounded is-large"
                             id="play-button"
+                            aria-label="Play/Pause"
                             disabled={player.isBusy()}
                             class:is-loading={player.isBusy()}
                             on:click={playPause}
@@ -246,6 +249,7 @@
                         <button
                             class="button is-light is-rounded"
                             id="next-button"
+                            aria-label="Nächstes Stück"
                             disabled={player.isBusy() || !player.isPlaying()}
                             on:click={next}
                         >

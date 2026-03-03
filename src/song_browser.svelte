@@ -128,11 +128,13 @@
             {/if}
             <table class="table">
                 <thead>
-                    <th>Song</th>
-                    <th>Tempo</th>
-                    <th>Länge</th>
-                    <th>Vorlauf</th>
-                    <th style="width: 90px;"></th>
+                    <tr>
+                        <th>Song</th>
+                        <th>Tempo</th>
+                        <th>Länge</th>
+                        <th>Vorlauf</th>
+                        <th style="width: 90px;"></th>
+                    </tr>
                 </thead>
                 <tbody>
                     {#if importedSong.Path != ""}
@@ -170,6 +172,7 @@
                                     <button
                                         class="button is-success"
                                         on:click={ImportSong}
+                                        aria-label="Song importieren"
                                     >
                                         <span class="icon"
                                             ><i class="fas fa-floppy-disk"
@@ -216,6 +219,7 @@
                                         <button
                                             class="button is-success"
                                             on:click={() => SaveSong(idx)}
+                                            aria-label="Song speichern"
                                         >
                                             <span class="icon"
                                                 ><i class="fas fa-floppy-disk"
@@ -234,6 +238,7 @@
                                         <button
                                             class="button is-primary"
                                             on:click={() => (editedSong = song)}
+                                            aria-label="Song bearbeiten"
                                         >
                                             <span class="icon"
                                                 ><i class="fas fa-pen"
@@ -242,6 +247,7 @@
                                         </button>
                                         <button
                                             class="button is-danger"
+                                            aria-label="Song löschen"
                                             on:click={() =>
                                                 DeleteSong(song.Path, idx)}
                                         >

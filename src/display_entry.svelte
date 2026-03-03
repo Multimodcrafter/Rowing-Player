@@ -16,7 +16,7 @@
         /></td
     >
     <td
-        ><button class="button is-danger" on:click
+        ><button class="button is-danger" on:click aria-label="Eintrag löschen"
             ><span class="icon"><i class="fas fa-trash"></i></span></button
         ></td
     >

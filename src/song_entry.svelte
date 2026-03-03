@@ -62,6 +62,7 @@
         <div class="control">
             <button
                 class="button is-primary is-small"
+                aria-label="Eintrag nach oben verschieben"
                 on:click={() => dispatch("up")}
                 ><span class="icon"><i class="fas fa-chevron-up"></i></span
                 ></button
@@ -70,6 +71,7 @@
         <div class="control">
             <button
                 class="button is-primary is-small"
+                aria-label="Eintrag nach unten verschieben"
                 on:click={() => dispatch("down")}
                 ><span class="icon"><i class="fas fa-chevron-down"></i></span
                 ></button
@@ -77,6 +79,7 @@
         </div>
         <div class="control">
             <button class="button is-success is-small" on:click={addInstruction}
+                aria-label="Instruktion hinzufügen"
                 ><span class="icon"><i class="fas fa-list-check"></i></span
                 ></button
             >
@@ -84,6 +87,7 @@
         <div class="control">
             <button
                 class="button is-danger is-small"
+                aria-label="Eintrag löschen"
                 on:click={() => dispatch("delete")}
                 ><span class="icon"><i class="fas fa-trash"></i></span></button
             >

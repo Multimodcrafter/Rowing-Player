@@ -56,9 +56,11 @@
         <section class="modal-card-body">
             <table class="table">
                 <thead>
-                    <th>Training</th>
-                    <th>Ist Vorlage</th>
-                    <th style="width: 120px;"></th>
+                    <tr>
+                        <th>Training</th>
+                        <th>Ist Vorlage</th>
+                        <th style="width: 120px;"></th>
+                    </tr>
                 </thead>
                 <tbody>
                     {#each trainingList as training, idx}
@@ -85,6 +87,7 @@
                                             editedTraining = training;
                                             show = false;
                                         }}
+                                        aria-label="Training bearbeiten"
                                     >
                                         <span class="icon"
                                             ><i class="fas fa-pen"></i></span
@@ -95,6 +98,7 @@
                                         on:click={(evt) => {
                                             ExportTraining(evt, training.Name);
                                         }}
+                                        aria-label="Training exportieren"
                                     >
                                         <span class="icon"
                                             ><i class="fas fa-file-export"
@@ -105,6 +109,7 @@
                                         class="button is-danger"
                                         on:click={() =>
                                             DeleteTraining(training.Name, idx)}
+                                        aria-label="Training löschen"
                                     >
                                         <span class="icon"
                                             ><i class="fas fa-trash"></i></span

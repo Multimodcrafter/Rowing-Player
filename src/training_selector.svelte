@@ -68,9 +68,11 @@
         <section class="modal-card-body">
             <table class="table">
                 <thead>
-                    <th>Training</th>
-                    <th>Ist Vorlage</th>
-                    <th style="width: 120px;"></th>
+                    <tr>
+                        <th>Training</th>
+                        <th>Ist Vorlage</th>
+                        <th style="width: 120px;"></th>
+                    </tr>
                 </thead>
                 <tbody>
                     {#each trainingList as training, idx}
@@ -95,6 +97,7 @@
                                     on:click={() => {
                                         SelectTraining(training);
                                     }}
+                                    aria-label="Training wählen"
                                 >
                                     <span class="icon"
                                         ><i class="fas fa-circle-play"

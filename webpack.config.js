@@ -52,7 +52,7 @@ module.exports = {
       '.mjs',
       '.svelte'
     ],
-    conditionNames: ["svelte"]
+    conditionNames: ["svelte", "browser", "..."]
   },
   plugins: [
     new MiniCssExtractPlugin({
