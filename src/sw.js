@@ -1,4 +1,4 @@
-export const VERSION = "0.3.7";
+export const VERSION = "1.0.1";
 const CACHE_NAME = `rowing-player-${VERSION}`;
 
 const APP_STATIC_RESOURCES = [
