@@ -17,6 +17,7 @@
       devShells = eachSystem (pkgs: {
         default = pkgs.mkShell {
           packages = [
+            pkgs.codex
             pkgs.nodejs
 
             # Alternatively, you can use a specific major version of Node.js
@@ -34,8 +35,8 @@
             # pkgs.bun
 
             # Required to enable the language server
-            pkgs.nodePackages.typescript
-            pkgs.nodePackages.typescript-language-server
+            pkgs.typescript
+            pkgs.typescript-language-server
 
             # Python is required on NixOS if the dependencies require node-gyp
 

@@ -1,4 +1,6 @@
-export const VERSION = "1.0.2";
+import packageInfo from "../package.json";
+
+export const VERSION = packageInfo.version;
 const CACHE_NAME = `rowing-player-${VERSION}`;
 
 const APP_STATIC_RESOURCES = [

@@ -6,7 +6,8 @@ module.exports = {
   mode: "development",
   entry: {
     player: './src/player.js',
-    editor: './src/editor.js'
+    editor: './src/editor.js',
+    sw: { import: './src/sw.js', filename: 'sw.js' }
   },
   output: {
     path: path.resolve(__dirname, 'dist/'),
@@ -60,7 +61,6 @@ module.exports = {
     }),
     new CopyPlugin({
       patterns: [
-        { from: 'src/sw.js' },
         { from: "src/index.html" },
         { from: "src/editor.html" },
         { from: "src/rowingplayer.json" },
